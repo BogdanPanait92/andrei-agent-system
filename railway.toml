@@ -1,0 +1,16 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+numReplicas = 1
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+startCommand = "python -m src.api.server"
+
+# Railway Cron Jobs (configure in Railway Dashboard > Service > Cron)
+# Daily Briefing:  0 7 * * *   -> python run_daily.py
+# Weekly Review:   0 20 * * 0  -> python run_weekly.py
+# Smart Alerts:    0 9,14,18 * * * -> python run_alerts.py

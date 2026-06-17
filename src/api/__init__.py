@@ -1,0 +1,1 @@
+"""HTTP API for health checks and manual triggers."""

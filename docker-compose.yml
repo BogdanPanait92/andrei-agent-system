@@ -1,0 +1,70 @@
+version: "3.8"
+
+services:
+  scheduler:
+    build: .
+    container_name: andrei-agents-scheduler
+    env_file: .env
+    restart: unless-stopped
+    command: python src/scheduler.py
+    volumes:
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+
+  dashboard:
+    build: .
+    container_name: andrei-agents-dashboard
+    env_file: .env
+    restart: unless-stopped
+    command: streamlit run src/dashboard/app.py --server.port=8501 --server.address=0.0.0.0
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      - scheduler
+
+  api:
+    build: .
+    container_name: andrei-agents-api
+    env_file: .env
+    restart: unless-stopped
+    command: python -m src.api.server
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # One-off job runners (use: docker compose run daily)
+  daily:
+    build: .
+    env_file: .env
+    profiles: ["jobs"]
+    command: python run_daily.py
+
+  weekly:
+    build: .
+    env_file: .env
+    profiles: ["jobs"]
+    command: python run_weekly.py
+
+  crew:
+    build: .
+    env_file: .env
+    profiles: ["jobs"]
+    command: python run_crew.py
+
+  alerts:
+    build: .
+    env_file: .env
+    profiles: ["jobs"]
+    command: python run_alerts.py
