@@ -90,6 +90,7 @@ Folosit rar. Estimare: +$1–5/lună.
 | Notion API | Gratuit |
 | Google APIs (Calendar, Docs, Drive) | Gratuit (quotas generoase) |
 | Telegram Bot API | Gratuit |
+| Discord Webhooks | Gratuit |
 | WhatsApp Cloud API | ~1000 conv/lună gratuit, apoi ~$0.05–0.15/conversație |
 
 ### 6. GitHub

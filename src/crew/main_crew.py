@@ -2,8 +2,10 @@
 
 from crewai import Crew, Process, Task
 
-from src.agents.definitions import create_all_agents
+from src.agents.definitions import create_all_agents, create_idea_mode_agent
+from src.integrations.content_briefing import append_to_daily_briefing
 from src.integrations.memory import MemoryStore
+from src.integrations.notion import NotionClient
 from src.utils.config import settings
 from src.utils.logging import get_logger
 
@@ -36,14 +38,15 @@ Creează briefing zilnic pentru Andrei:
 3. Evaluează echilibrul muncă-familie
 4. 3 priorități clare pentru azi
 5. O sugestie de timp de calitate cu familia
+Secțiunea Content Creation (Sheets) este adăugată automat la final — nu o inventa.
 Răspunde în română, concis, empatic.""",
                 expected_output="Briefing zilnic structurat cu priorități, calendar, alerte și sugestie familie.",
                 agent=self.agents["ceo"],
             ),
             Task(
                 description="""Pe baza briefing-ului CEO, verifică content pipeline-ul:
-- Idei noi sau postări planificate
-- Sugestie rapidă de conținut pentru azi/mâine dacă e cazul""",
+- Idei noi sau postări planificate din Notion
+- Secțiunea Content Creation din Sheets (lipsuri + Done) vine automat la finalul briefing-ului""",
                 expected_output="Update scurt content pipeline + sugestie opțională.",
                 agent=self.agents["content"],
                 context=[],
@@ -87,6 +90,73 @@ Pune 2-3 întrebări puternice pentru jurnalul săptămânii.""",
             ),
         ]
 
+    def create_idea_tasks(self, user_query: str) -> list[Task]:
+        """Focused mode: implementation plan for a new idea."""
+        ctx = self._build_context(user_query)
+        return [
+            Task(
+                description=f"""{ctx}
+Andrei îți împărtășește o idee nouă. Oferă sugestii practice de implementare.
+
+Ideea: {user_query}
+
+Structură răspuns (în română):
+1. **Rezumat** — reformulează ideea în 1-2 propoziții
+2. **De ce merită** — valoare pentru Corporație / Creativ / Ajut Cum Pot / Familie
+3. **Pași de implementare** — 3-7 pași concreți, ordonați
+4. **Quick win** — ce poate face Andrei azi sau în 30 min
+5. **Resurse** — timp estimat, cost aproximativ, ajutor necesar
+6. **Atenție** — riscuri, dependențe, ce să amâne
+7. **Următorul pas** — o singură acțiune clară pentru azi
+
+Planul va fi salvat automat în Notion Ideas după generare — nu e nevoie de tool separat.
+Fii practic, nu teoretic. Protejează echilibrul vieții lui Andrei.""",
+                expected_output="Plan de implementare structurat, acționabil, în română.",
+                agent=self.agents["content"],
+            ),
+        ]
+
+    def create_chat_tasks(
+        self,
+        user_query: str,
+        conversation_context: str = "",
+        web_search_context: str = "",
+    ) -> list[Task]:
+        """Single-agent conversational mode for Discord/Telegram chat."""
+        ctx = self._build_context(user_query)
+        conv_block = f"\n{conversation_context}\n" if conversation_context else ""
+        web_block = f"\n{web_search_context}\n" if web_search_context else ""
+        return [
+            Task(
+                description=f"""{ctx}
+Ești în mod conversațional — {settings.user_name} te contactează direct.
+{conv_block}{web_block}
+Cerere curentă: {user_query}
+
+Instrucțiuni:
+- Răspunde direct la întrebare, concis dar complet
+- Pentru date (Sheets, Notion, Calendar) APELEAZĂ tool-ul și folosește DOAR output-ul lui
+- Tool-urile fără parametri se apelează cu input gol — NU trimite JSON inventat ca input
+- INTERZIS să inventezi parteneri, task-uri, idei, evenimente sau materiale
+- Dacă tool-ul returnează SHEETS_EMPTY, NOTION_IDEAS_EMPTY sau 0, spune că lista e goală
+- Pentru idei în draft: apelează Get Content Ideas cu status='Draft'
+- Dacă tool-ul returnează EROARE sau eșuează apelul, raportează eroarea — NU completa cu date fictive
+- Poți crea și actualiza task-uri în Notion și rânduri în Sheets când se cere explicit
+- La adăugare în Sheets: pune DOAR câmpurile pe care utilizatorul le spune; restul rămân goale
+- Folosește parametrul detalii doar pentru câmpurile explicite (format key=value|key=value)
+- Confirmă clar orice modificare făcută în Notion sau Sheets
+- Răspunde în română, empatic și practic
+- Dacă Andrei împărtășește o idee nouă, sugerează pași concreți de implementare (nu doar validare)
+- Nu genera briefing complet decât dacă se cere explicit
+- Dacă există secțiunea „Rezultate căutare web”, utilizatorul are deja linkurile — oferă sugestii concrete din conținutul citit și citează sursele""",
+                expected_output=(
+                    "Răspuns conversațional util, cu acțiuni concrete "
+                    "dacă s-au făcut modificări în Notion."
+                ),
+                agent=self.agents["ceo"],
+            ),
+        ]
+
     def create_custom_tasks(self, user_query: str) -> list[Task]:
         ctx = self._build_context(user_query)
         return [
@@ -119,20 +189,48 @@ Oferă răspuns integrat care acoperă toate dimensiunile relevante.""",
             ),
         ]
 
-    def run(self, mode: str = "custom", query: str = "") -> str:
+    def _agents_for_mode(self, mode: str) -> list:
+        if mode == "idea":
+            return [create_idea_mode_agent()]
+        return list(self.agents.values())
+
+    def _tasks_for_mode(
+        self,
+        mode: str,
+        query: str,
+        conversation_context: str = "",
+        web_search_context: str = "",
+    ) -> list[Task]:
         if mode == "daily":
-            tasks = self.create_daily_briefing_tasks()
-        elif mode == "weekly":
-            tasks = self.create_weekly_review_tasks()
-        else:
-            tasks = self.create_custom_tasks(query or "Status general")
+            return self.create_daily_briefing_tasks()
+        if mode == "weekly":
+            return self.create_weekly_review_tasks()
+        if mode == "chat":
+            return self.create_chat_tasks(
+                query or "Salut", conversation_context, web_search_context
+            )
+        if mode == "idea":
+            return self.create_idea_tasks(query or "Idee nouă")
+        return self.create_custom_tasks(query or "Status general")
+
+    def run(
+        self,
+        mode: str = "custom",
+        query: str = "",
+        conversation_context: str = "",
+        web_search_context: str = "",
+    ) -> str:
+        tasks = self._tasks_for_mode(
+            mode, query, conversation_context, web_search_context
+        )
+        agents = self._agents_for_mode(mode)
 
         crew = Crew(
-            agents=list(self.agents.values()),
+            agents=agents,
             tasks=tasks,
             process=Process.sequential,
             verbose=True,
-            memory=True,
+            memory=False,
         )
 
         logger.info("crew_starting", mode=mode, query=query[:100] if query else "")
@@ -145,8 +243,33 @@ Oferă răspuns integrat care acoperă toate dimensiunile relevante.""",
             category=mode,
         )
         logger.info("crew_completed", mode=mode)
+        if mode == "daily":
+            output = append_to_daily_briefing(output)
+        if mode == "idea":
+            output = self._append_idea_notion_save(output, query or "")
         return output
 
+    def _append_idea_notion_save(self, output: str, idea_text: str) -> str:
+        try:
+            page = NotionClient().save_idea_suggestion(idea_text=idea_text, plan_text=output)
+        except Exception as e:
+            logger.warning("idea_notion_save_failed", error=str(e))
+            return f"{output}\n\n_(Notion: salvare eșuată — {e})_"
+        if not page:
+            return output
+        title = NotionClient.extract_idea_title(idea_text)
+        return f"{output}\n\n✅ **Salvat în Notion → Ideas:** {title}"
 
-def run_crew(query: str = "", mode: str = "custom") -> str:
-    return AndreiCrew().run(mode=mode, query=query)
+
+def run_crew(
+    query: str = "",
+    mode: str = "custom",
+    conversation_context: str = "",
+    web_search_context: str = "",
+) -> str:
+    return AndreiCrew().run(
+        mode=mode,
+        query=query,
+        conversation_context=conversation_context,
+        web_search_context=web_search_context,
+    )

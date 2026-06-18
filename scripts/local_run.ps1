@@ -1,9 +1,9 @@
-# Local run helper — Andrei AI Agent System (Windows)
+# Local run helper - Andrei AI Agent System (Windows)
 # Usage: .\scripts\local_run.ps1 telegram|daily|crew|dashboard
 
 param(
     [Parameter(Position = 0)]
-    [ValidateSet("telegram", "daily", "crew", "dashboard", "api")]
+    [ValidateSet("telegram", "discord", "discord-bot", "notion", "google", "google-sheets", "daily", "crew", "dashboard", "api")]
     [string]$Command = "telegram"
 )
 
@@ -20,13 +20,18 @@ if (-not (Test-Path $Python)) {
 
 if (-not (Test-Path (Join-Path $Root ".env"))) {
     Copy-Item (Join-Path $Root ".env.example") (Join-Path $Root ".env")
-    Write-Host ".env created from .env.example — edit it with your API keys!" -ForegroundColor Yellow
+    Write-Host ".env created from .env.example - edit it with your API keys!" -ForegroundColor Yellow
 }
 
 switch ($Command) {
-    "telegram" { & $Python (Join-Path $Root "scripts\test_telegram.py") }
-    "daily"    { & $Python (Join-Path $Root "run_daily.py") }
-    "crew"     { & $Python (Join-Path $Root "run_crew.py") "ce prioritati am azi?" }
+    "telegram"  { & $Python (Join-Path $Root "scripts\test_telegram.py") }
+    "discord"     { & $Python (Join-Path $Root "scripts\test_discord.py") }
+    "discord-bot" { & $Python (Join-Path $Root "run_discord_bot.py") }
+    "notion"    { & $Python (Join-Path $Root "scripts\test_notion.py") }
+    "google"        { & $Python (Join-Path $Root "scripts\test_google.py") }
+    "google-sheets" { & $Python (Join-Path $Root "scripts\test_google_sheets.py") }
+    "daily"     { & $Python (Join-Path $Root "run_daily.py") }
+    "crew"      { & $Python (Join-Path $Root "run_crew.py") "ce prioritati am azi?" }
     "dashboard" { & $Python -m streamlit run (Join-Path $Root "src\dashboard\app.py") }
-    "api"      { & $Python -m src.api.server }
+    "api"       { & $Python -m src.api.server }
 }

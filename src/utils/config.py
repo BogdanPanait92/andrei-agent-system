@@ -18,11 +18,11 @@ class Settings(BaseSettings):
     app_env: Literal["development", "production", "test"] = "development"
     log_level: str = "INFO"
     timezone: str = "Europe/Bucharest"
-    andrei_name: str = "Andrei"
+    user_name: str = "Andrei"
 
     # LLM - Grok (xAI)
     xai_api_key: str = ""
-    grok_model: str = "grok-2-latest"
+    grok_model: str = "grok-4.3"
 
     # LLM - Fallbacks
     openai_api_key: str = ""
@@ -44,9 +44,32 @@ class Settings(BaseSettings):
     google_credentials_json: str = ""
     google_calendar_id: str = "primary"
     google_drive_folder_id: str = ""
+    google_sheet_ajut_cum_pot_id: str = ""
+    google_sheet_ajut_tab: str = "Sheet1"
+    google_sheet_editor_pipeline_id: str = ""
+    google_sheet_editor_tab: str = "Sheet1"
 
-    # Notifier: telegram | whatsapp
-    notifier_provider: Literal["telegram", "whatsapp"] = "telegram"
+    # Notifier: telegram | whatsapp | discord
+    notifier_provider: Literal["telegram", "whatsapp", "discord"] = "telegram"
+
+    # Discord (Incoming Webhook — outbound notifications)
+    discord_webhook_url: str = ""
+    discord_webhook_username: str = "Andrei AI"
+
+    # Discord Bot (two-way chat)
+    discord_bot_token: str = ""
+    discord_allowed_channel_ids: str = ""
+    discord_allowed_user_ids: str = ""
+    enable_discord_bot: bool = False
+
+    # Web search (explicit trigger only — e.g. caută: or caută pe net)
+    enable_web_search: bool = True
+    web_search_max_results: int = 5
+    web_search_fetch_pages: bool = True
+    web_search_max_pages_to_read: int = 3
+    web_search_page_char_limit: int = 3500
+    web_search_page_max_bytes: int = 500_000
+    web_search_fetch_timeout_seconds: int = 15
 
     # Telegram
     telegram_bot_token: str = ""

@@ -1,8 +1,10 @@
 """LLM provider with Grok primary and fallback chain."""
 
+import os
 from enum import Enum
 from typing import Any
 
+from crewai import LLM as CrewAILLM
 from langchain_anthropic import ChatAnthropic
 from langchain_core.language_models import BaseChatModel
 from langchain_openai import ChatOpenAI
@@ -83,3 +85,66 @@ def get_llm(provider: LLMProvider | None = None) -> BaseChatModel:
 def get_llm_with_fallback() -> BaseChatModel:
     """Alias for get_llm with full fallback chain."""
     return get_llm()
+
+
+def _litellm_model_name(provider: str, model: str) -> str:
+    """Map config model to LiteLLM provider/model format for CrewAI."""
+    if "/" in model:
+        return model
+    prefixes = {"grok": "xai", "anthropic": "anthropic", "openai": "openai"}
+    prefix = prefixes.get(provider, provider)
+    return f"{prefix}/{model}"
+
+
+def configure_llm_environment() -> None:
+    """Expose API keys to LiteLLM/CrewAI via environment variables."""
+    if settings.xai_api_key:
+        os.environ["XAI_API_KEY"] = settings.xai_api_key
+    if settings.openai_api_key and "your_" not in settings.openai_api_key:
+        os.environ["OPENAI_API_KEY"] = settings.openai_api_key
+    if settings.anthropic_api_key and "your_" not in settings.anthropic_api_key:
+        os.environ["ANTHROPIC_API_KEY"] = settings.anthropic_api_key
+
+
+def get_crewai_llm() -> CrewAILLM:
+    """CrewAI-compatible LLM with Grok primary and LiteLLM provider prefix."""
+    configure_llm_environment()
+    order = settings.llm_providers
+    last_error: Exception | None = None
+
+    creators = {
+        "grok": lambda: CrewAILLM(
+            model=_litellm_model_name("grok", settings.grok_model),
+            api_key=settings.xai_api_key,
+            temperature=0.7,
+            max_tokens=4096,
+        ),
+        "anthropic": lambda: CrewAILLM(
+            model=_litellm_model_name("anthropic", settings.anthropic_model),
+            api_key=settings.anthropic_api_key,
+            temperature=0.7,
+            max_tokens=4096,
+        ),
+        "openai": lambda: CrewAILLM(
+            model=_litellm_model_name("openai", settings.openai_model),
+            api_key=settings.openai_api_key,
+            temperature=0.7,
+            max_tokens=4096,
+        ),
+    }
+
+    for name in order:
+        try:
+            if name not in creators:
+                continue
+            key_attr = {"grok": "xai_api_key", "anthropic": "anthropic_api_key", "openai": "openai_api_key"}[name]
+            if not getattr(settings, key_attr) or "your_" in getattr(settings, key_attr, ""):
+                raise ValueError(f"{key_attr} not configured")
+            llm = creators[name]()
+            logger.info("crewai_llm_initialized", provider=name, model=llm.model)
+            return llm
+        except (ValueError, Exception) as e:
+            last_error = e
+            logger.warning("crewai_llm_provider_failed", provider=name, error=str(e))
+
+    raise RuntimeError(f"All CrewAI LLM providers failed. Last error: {last_error}")

@@ -7,7 +7,7 @@ from src.utils.config import Settings
 
 def test_settings_defaults():
     settings = Settings()
-    assert settings.andrei_name == "Andrei"
+    assert settings.user_name == "Andrei"
     assert settings.timezone == "Europe/Bucharest"
     assert settings.memory_provider in ("supabase", "pinecone")
 

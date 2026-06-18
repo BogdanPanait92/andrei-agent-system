@@ -6,6 +6,7 @@ from src.integrations.notifier import get_notifier, reset_notifier
 from src.integrations.notifier_base import strip_markdown
 from src.integrations.telegram_bot import TelegramNotifier
 from src.integrations.whatsapp import WhatsAppNotifier, _normalize_phone
+from src.integrations.discord import DiscordNotifier
 from src.utils.config import Settings
 
 
@@ -27,6 +28,11 @@ def test_telegram_notifier_disabled():
 
 def test_whatsapp_notifier_disabled():
     n = WhatsAppNotifier()
+    assert n.enabled is False
+
+
+def test_discord_notifier_disabled():
+    n = DiscordNotifier()
     assert n.enabled is False
 
 

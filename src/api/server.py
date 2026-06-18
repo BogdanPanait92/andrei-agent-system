@@ -63,7 +63,24 @@ class Handler(BaseHTTPRequestHandler):
         logger.debug("http_request", message=format % args)
 
 
+def _start_discord_bot_background() -> None:
+    if not settings.enable_discord_bot or not settings.discord_bot_token.strip():
+        return
+
+    def _run() -> None:
+        try:
+            from src.bot.discord_bot import run_discord_bot
+
+            run_discord_bot()
+        except Exception as e:
+            logger.error("discord_bot_background_failed", error=str(e))
+
+    threading.Thread(target=_run, daemon=True, name="discord-bot").start()
+    logger.info("discord_bot_background_started")
+
+
 def main() -> None:
+    _start_discord_bot_background()
     port = int(os.environ.get("PORT", settings.port))
     server = HTTPServer(("0.0.0.0", port), Handler)
     logger.info("api_server_started", port=port)

@@ -1,0 +1,1294 @@
+---
+pid: 7568
+cwd: "D:\agent mihaita"
+command: "Get-CimInstance Win32_Process -Filter \"Name='python.exe'\" | Where-Object { $_.CommandLine -like '*run_discord_bot*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }; Start-Sleep 1; cd \"D:\\agent mihaita\"; .\\venv\\Scripts\\python.exe run_discord_bot.py"
+started_at: 2026-06-18T19:43:22.562Z
+running_for_ms: 6634995  
+---
+HTTP Request: GET https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json "HTTP/1.1 200 OK"
+2026-06-18T19:43:29.795346Z [info     ] discord_bot_starting          
+PyNaCl is not installed, voice will NOT be supported
+davey is not installed, voice will NOT be supported
+logging in using static token
+Shard ID None has connected to Gateway (Session ID: f4131fa1463c5d51b7e51e0d45b017ca).
+2026-06-18T19:43:32.813042Z [info     ] discord_bot_ready              channels=1 user='Notion Bot#0065'
+response: https://en.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=ce%20content%20as%20putea%20%20sa%20fac%20despre%20caru%20cu%20%20bere 200
+response: https://grokipedia.com/api/typeahead?query=ce+content+as+putea++sa+fac+despre+caru+cu++bere&limit=1 200
+response: https://search.yahoo.com/search;_ylt=vlyJlJHEJbaVeiUBU-4Sg17j;_ylu=pHXB4Qprxp2diKRSfAOkIM5_Zt7AQw0acdkwaoW6aAOSDOk?p=ce+content+as+putea++sa+fac+despre+caru+cu++bere 200
+2026-06-18T19:45:54.647964Z [info     ] web_search_completed           query='ce content as putea  sa fac despre caru cu  bere' results=5
+2026-06-18T19:45:54.648969Z [info     ] crewai_llm_initialized         model=xai/grok-4.3 provider=grok
+2026-06-18T19:45:54.946146Z [info     ] memory_initialized             provider=supabase
+2026-06-18T19:45:55.111874Z [error    ] memory_recall_failed           error='[Errno 11001] getaddrinfo failed'
+2026-06-18T19:45:55.161909Z [info     ] crew_starting                  mode=chat query='[Căutare web solicitată explicit]\nTermen căutat: ce content as putea  sa fac despre caru cu  bere\nRă'
+┌─────────────────────────── Crew Execution Started ───────────────────────────┐
+│                                                                              │
+│  Crew Execution Started                                                      │
+│  Name: crew                                                                  │
+│  ID: cd8b2f21-a670-473d-b394-36d31266b121                                    │
+│  Tool Args:                                                                  │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+22:45:55 - LiteLLM:INFO🚀 Crew: crew
+└── 📋 Task: bbe7d4b4-ebf5-4770-8286-d20974e064e1
+    Status: Executing Task...
+┌────────────────────────────── 🤖 Agent Started ──────────────────────────────┐
+│                                                                              │
+│  Agent: CEO Strategic Advisor                                                │
+│                                                                              │
+│  Task:                                                                       │
+│  Query utilizator: [Căutare web solicitată explicit]                         │
+│  Termen căutat: ce content as putea  sa fac despre caru cu  bere             │
+│  Răspunde la întrebare folosind rezultatele web de mai sus.                  │
+│  Profil: Andrei - tată, soț, creator conținut, inginer IT, fondator Ajut     │
+│  Cum Pot                                                                     │
+│  Data: Europe/Bucharest                                                      │
+│                                                                              │
+│                                                                              │
+│  Ești în mod conversațional — Andrei te contactează direct.                  │
+│                                                                              │
+│  --- Rezultate căutare web (5) ---                                           │
+│  1. Caru' cu Bere - WikipediaCaru' cu Bere - Descoperă acest loc din         │
+│  BucureștiSimboluri ale Bucureștiului: La Caru' cu Bere, acum 130 de         │
+│  ...Caru’ cu Bere, 130 de ani de istorie. De la crâșma unde berea ...Caru’   │
+│  cu bere - SeeBucharest.ro                                                   │
+│     Sala de consumație, situată la parter și mezanin, are 7 m înălțime,      │
+│  decorată în stil gotic, cu coloane și tavane de stucatură, cu lambriuri     │
+│  sculptate și picturi. Tot ce trebuie să știi despre Caru' cu Bere unde se   │
+│  află, ce poți face, program, istoric și recomandări. Sep 10, 2025 · Fondat  │
+│  în 1899, Caru’ cu Bere nu este doar o berărie; este un simbol al istoriei   │
+│  bucureștene, o destinație unde vizitatorii pot simți pulsul orașului și     │
+│  pot retrăi farmecul vremurilor de odinioară, când berea era adusă           │
+│     URL: https://ro.wikipedia.org/wiki/Caru'_cu_Bere                         │
+│                                                                              │
+│  2. Caru' cu bere - Punem Sufletul Bucurestiului pe Masa                     │
+│     La baza identității Caru’ cu bere se află o istorie de peste 140 de      │
+│  ani, sintetizată prin frații Mircea, dintre care fondatorul Nicolae         │
+│  Mircea, succesiunea sa și clădirea clasificată ca monument istoric.         │
+│     URL: https://www.carucubere.ro/                                          │
+│                                                                              │
+│  3. Caru' cu bere Restaurant - The Soul of BucharestCaru' cu Bere -          │
+│  WikipediaCaru' cu Bere - Descoperă acest loc din BucureștiSimboluri ale     │
+│  Bucureștiului: La Caru' cu Bere, acum 130 de ...Caru’ cu Bere, 130 de ani   │
+│  de istorie. De la crâșma unde berea ...Caru’ cu bere - SeeBucharest.ro      │
+│     Everything you need to know about your favourite restaurant in           │
+│  Bucharest. About the place where you can taste some of the finest romanian  │
+│  dishes and enjoy a beer crafter from an unique and original recipe,         │
+│  created in 1879. About the place that keeps the spirit of old Bucharest     │
+│  alive: Caru ' cu bere! Sala de consumație, situată la parter și mezanin,    │
+│  are 7 m înălțime, decorată în stil gotic, cu coloane și tavane de           │
+│  stucatură, cu lambriuri sculptate și picturi. Tot ce trebuie să știi        │
+│  despre Caru' c                                                              │
+│     URL: https://www.carucubere.ro/en/                                       │
+│                                                                              │
+│  4. Caru' cu Bere - Descoperă acest loc din București                        │
+│     Tot ce trebuie să știi despre Caru' cu Bere unde se află, ce poți face,  │
+│  program, istoric și recomandări.                                            │
+│     URL: https://www.bucuresti.ro/locatii/restaurante-caru-cu-bere-631       │
+│                                                                              │
+│  5. Simboluri ale Bucureștiului: La Caru' cu Bere, acum 130 de ...           │
+│     Sep 10, 2025 · Fondat în 1899, Caru’ cu Bere nu este doar o berărie;     │
+│  este un simbol al istoriei bucureștene, o destinație unde vizitatorii pot   │
+│  simți pulsul orașului și pot retrăi farmecul vremurilor de odinioară, când  │
+│  berea era adusă cu carele trase de cai pe Calea Victoriei.                  │
+│     URL:                                                                     │
+│  https://www.bucuresti.ro/articole/locul-legendar-al-capitalei-la-caru-cu-b  │
+│  ere-acum-130-de-ani-bautura-sosea-in-carele-trase-de-cai-pe-calea-victorie  │
+│  i-406                                                                       │
+│                                                                              │
+│  Instrucțiune: Bazează răspunsul pe aceste rezultate. Menționează sursele    │
+│  (URL) când folosești informații de aici.                                    │
+│                                                                              │
+│  Cerere curentă: [Căutare web solicitată explicit]                           │
+│  Termen căutat: ce content as putea  sa fac despre caru cu  bere             │
+│  Răspunde la întrebare folosind rezultatele web de mai sus.                  │
+│                                                                              │
+│  Instrucțiuni:                                                               │
+│  - Răspunde direct la întrebare, concis dar complet                          │
+│  - Pentru date (Sheets, Notion, Calendar) APELEAZĂ tool-ul și folosește      │
+│  DOAR output-ul lui                                                          │
+│  - Tool-urile fără parametri se apelează cu input gol — NU trimite JSON      │
+│  inventat ca input                                                           │
+│  - INTERZIS să inventezi parteneri, task-uri, idei, evenimente sau           │
+│  materiale                                                                   │
+│  - Dacă tool-ul returnează SHEETS_EMPTY, NOTION_IDEAS_EMPTY sau 0, spune că  │
+│  lista e goală                                                               │
+│  - Pentru idei în draft: apelează Get Content Ideas cu status='Draft'        │
+│  - Dacă tool-ul returnează EROARE sau eșuează apelul, raportează eroarea —   │
+│  NU completa cu date fictive                                                 │
+│  - Poți crea și actualiza task-uri în Notion și rânduri în Sheets când se    │
+│  cere explicit                                                               │
+│  - La adăugare în Sheets: pune DOAR câmpurile pe care utilizatorul le        │
+│  spune; restul rămân goale                                                   │
+│  - Folosește parametrul detalii doar pentru câmpurile explicite (format      │
+│  key=value|key=value)                                                        │
+│  - Confirmă clar orice modificare făcută în Notion s: utils.py:3258 - 
+LiteLLM completion() model= grok-4.3; provider = xai
+au Sheets                │
+│  - Răspunde în română, empatic și practic                                    │
+│  - Dacă Andrei împărtășește o idee nouă, sugerează pași concreți de          │
+│  implementare (nu doar validare)                                             │
+│  - Nu genera briefing complet decât dacă se cere explicit                    │
+│  - Dacă există secțiunea „Rezultate căutare web”, folosește-o pentru         │
+│  răspuns și citează URL-urile relevante                                      │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+LiteLLM completion() model= grok-4.3; provider = xai
+HTTP Request: POST https://api.x.ai/v1/chat/completions "HTTP/1.1 200 OK"
+22:46:02 - LiteLLM:INFOWrapper: Completed Call, calling success_handler
+🚀 Crew: crew
+└── 📋 Task: bbe7d4b4-ebf5-4770-8286-d20974e064e1
+    Status: Executing Task...
+┌─────────────────────────── ✅ Agent Final Answer ────────────────────────────┐
+│                                                                              │
+│  Agent: CEO Strategic Advisor                                                │
+│                                                                              │
+│  Final Answer:                                                               │
+│  Andrei, iată câteva idei concrete de content despre Caru' cu Bere, bazate   │
+│  strict pe sursele din căutare:                                              │
+│                                                                              │
+│  1. **Video istoric scurt (Reels/TikTok/YouTube Shorts)**: „Cum ajungea      │
+│  berea cu căruțele trase de cai pe Calea Victoriei acum 130 de ani” –        │
+│  povestește legenda fondării din 1899 și transformarea într-un simbol al     │
+│  Bucureștiului (sursa:                                                       │
+│  https://www.bucuresti.ro/articole/locul-legendar-al-capitalei-la-caru-cu-b  │
+│  ere-acum-130-de-ani-bautura-sosea-in-carele-trase-de-cai-pe-calea-victorie  │
+│  i-406 și https://ro.wikipedia.org/wiki/Caru'_cu_Bere).                      │
+│                                                                              │
+│  2. **Review + experiență personală**: Vizită + degustare de preparate       │
+│  românești tradiționale + berea originală creată în 1879. Poți arăta         │
+│  decorul gotic cu tavanul de 7m, coloane și stucatură (sursa:                │
+│  https://www.carucubere.ro/ și https://www.carucubere.ro/en/).               │
+│                                                                              │
+│  3. **Content „București vechi vs nou”**: Compară atmosfera de la Caru' cu   │
+│  Bere (monument istoric cu istorie de peste 140 de ani) cu localurile        │
+│  moderne – perfect pentru un vlog sau articol care leagă trecutul de         │
+│  prezent (sursa:                                                             │
+│  https://www.bucuresti.ro/locatii/restaurante-caru-cu-bere-631).             │
+│                                                                              │
+│  4. **Behind-the-scenes / povestea familiei Mircea**: Focus pe frații        │
+│  Mircea și moștenirea clădirii – conținut mai profund, autentic, care se     │
+│  potrivește cu valorile tale de impact social și autenticitate.              │
+│                                                                              │
+│  Poți începe cu un Reel de 30-60 secunde despre istoria cu căruțele – e      │
+│  ușor de filmat și are potențial viral. Dacă vrei, spune-mi și creăm un      │
+│  task în Notion cu una din aceste idei. Ce zici, care ți se pare mai         │
+│  potrivită acum?                                                             │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+🚀 Crew: crew
+└── 📋 Task: bbe7d4b4-ebf5-4770-8286-d20974e064e1
+    Assigned to: CEO Strategic Advisor
+    Status: ✅ Completed
+┌────────────────────────────── Task Completion ───────────────────────────────┐
+│                                                                              │
+│  Task Completed                                                              │
+│  Name: bbe7d4b4-ebf5-4770-8286-d20974e064e1                                  │
+│  Agent: CEO Strategic Advisor                                                │
+│  Tool Args:                                                                  │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────── Crew Completion ───────────────────────────────┐
+│                                                                              │
+│  Crew Execution Completed                                                    │
+│  Name: crew                                                                  │
+│  ID: cd8b2f21-a670-473d-b394-36d31266b121                                    │
+│  Tool Args:                                                                  │
+│  Final Output: Andrei, iată câteva idei concrete de content despre Caru' cu  │
+│  Bere, bazate strict pe sursele din căutare:                                 │
+│                                                                              │
+│  1. **Video istoric scurt (Reels/TikTok/YouTube Shorts)**: „Cum ajungea      │
+│  berea cu căruțele trase de cai pe Calea Victoriei acum 130 de ani” –        │
+│  povestește legenda fondării din 1899 și transformarea într-un simbol al     │
+│  Bucureștiului (sursa:                                                       │
+│  https://www.bucuresti.ro/articole/locul-legendar-al-capitalei-la-caru-cu-b  │
+│  ere-acum-130-de-ani-bautura-sosea-in-carele-trase-de-cai-pe-calea-victorie  │
+│  i-406 și https://ro.wikipedia.org/wiki/Caru'_cu_Bere).                      │
+│                                                                              │
+│  2. **Review + experiență personală**: Vizită + degustare de preparate       │
+│  românești tradiționale + berea originală creată în 1879. Poți arăta         │
+│  decorul gotic cu tavanul de 7m, coloane și stucatură (sursa:                │
+│  https://www.carucubere.ro/ și https://www.carucubere.ro/en/).               │
+│                                                                              │
+│  3. **Content „București vechi vs nou”**: Compară atmosfera de la Caru' cu   │
+│  Bere (monument istoric cu istorie de peste 140 de ani) cu localurile        │
+│  moderne – perfect pentru un vlog sau articol care leagă trecutul de         │
+│  prezent (sursa:                                                             │
+│  https://www.bucuresti.ro/locatii/restaurante-caru-cu-bere-631).             │
+│                                                                              │
+│  4. **Behind-the-scenes / povestea familiei Mircea**: Focus pe frații        │
+│  Mircea și moștenirea clădirii – conținut mai profund, autentic, care se     │
+│  potrivește cu valorile tale de impact social și autenticitate.              │
+│                                                                              │
+│  Poți începe cu un Reel de 30-60 secunde despre istoria cu căruțele – e      │
+│  ușor de filmat și are potențial viral. Dacă vrei, spune-mi și creăm un      │
+│  task în Notion cu una din aceste idei. Ce zici, care ți se pare mai         │
+│  potrivită acum?                                                             │
+│                                    : utils.py:1260 - Wrapper: Completed Call, calling success_handler
+                                          │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+2026-06-18T19:46:02.454396Z [error    ] memory_store_failed            error='[Errno 11001] getaddrinfo failed'
+2026-06-18T19:46:02.454396Z [info     ] crew_completed                 mode=chat
+HTTP Request: GET https://api.notion.com/v1/databases/383e460518c780779ac1da562348b679 "HTTP/1.1 200 OK"
+HTTP Request: POST https://api.notion.com/v1/pages "HTTP/1.1 200 OK"
+2026-06-18T19:46:34.162732Z [info     ] idea_suggestion_saved          blocks=12 page_id=383e4605-18c7-8111-9ca3-e079f5d72219 plan_chars=1528 title='cauta pe net ce content as putea sa fac despre caru cu bere'
+2026-06-18T19:48:15.954101Z [info     ] crewai_llm_initialized         model=xai/grok-4.3 provider=grok
+2026-06-18T19:48:16.162862Z [info     ] memory_initialized             provider=supabase
+2026-06-18T19:48:16.343472Z [error    ] memory_recall_failed           error='[Errno 11001] getaddrinfo failed'
+22:48:16 - LiteLLM:INFO2026-06-18T19:48:16.419146Z [info     ] crew_starting                  mode=chat query='ce ai mai sugera in functie de ce ai aflat despre carul cu bere?'
+┌─────────────────────────── Crew Execution Started ───────────────────────────┐
+│                                                                              │
+│  Crew Execution Started                                                      │
+│  Name: crew                                                                  │
+│  ID: 6fe5b04c-1916-4ce7-af40-79867f27d8ec                                    │
+│  Tool Args:                                                                  │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+🚀 Crew: crew
+└── 📋 Task: dcbe672d-9ba4-4bec-bc43-15605d981ce0
+    Status: Executing Task...
+┌────────────────────────────── 🤖 Agent Started ──────────────────────────────┐
+│                                                                              │
+│  Agent: CEO Strategic Advisor                                                │
+│                                                                              │
+│  Task:                                                                       │
+│  Query utilizator: ce ai mai sugera in functie de ce ai aflat despre carul   │
+│  cu bere?                                                                    │
+│  Profil: Andrei - tată, soț, creator conținut, inginer IT, fondator Ajut     │
+│  Cum Pot                                                                     │
+│  Data: Europe/Bucharest                                                      │
+│                                                                              │
+│                                                                              │
+│  Ești în mod conversațional — Andrei te contactează direct.                  │
+│                                                                              │
+│  --- Conversație recentă în acest canal ---                                  │
+│  Andrei: cauta pe net ce content as putea  sa fac despre caru cu  bere       │
+│  Agent: Andrei, iată câteva idei concrete de content despre Caru' cu Bere,   │
+│  bazate strict pe sursele din căutare:                                       │
+│                                                                              │
+│  1. **Video istoric scurt (Reels/TikTok/YouTube Shorts)**: „Cum ajungea      │
+│  berea cu căruțele trase de cai pe Calea Victoriei acum 130 de ani” –        │
+│  povestește legenda fondării din 1899 și transformarea într-un simbol al     │
+│  Bucureștiului (sursa:                                                       │
+│  https://www.bucuresti.ro/articole/locul-legendar-al-capitalei-la-caru-cu-b  │
+│  ere-acum-130-de-ani-bautura-sosea-in-carele-trase-de-cai-pe-calea-victorie  │
+│  i-406 și https://ro.wikipedia.org/wiki/Caru'_cu_Bere).                      │
+│                                                                              │
+│  2. **Review + experiență personală**: Vizită + degustare de preparate       │
+│  românești tradiționale + berea originală creată în 1879. Poți arăta         │
+│  decorul gotic cu tavanul de 7m, coloane și stucatură (sursa:                │
+│  https://www.carucubere.ro/ și https://www.carucubere.ro/en/).               │
+│                                                                              │
+│  3. **Content „București vechi vs nou”**: Compară atmosfera de la Caru' cu   │
+│  Bere (monument istoric cu istorie de peste 140 de ani) cu localurile        │
+│  moderne – perfect pentru un vlog sau articol care leagă trecutul de         │
+│  prezent (sursa:                                                             │
+│  https://www.bucuresti.ro/locatii/restaurante-caru-cu-bere-631).             │
+│                                                                              │
+│  4. **Behind-the-scenes / povestea familiei Mircea**: Focus pe frații        │
+│  Mircea și moștenirea clădirii – conținut mai profund, autentic, care se     │
+│  potrivește cu valorile tale de impact social și autenticitate.              │
+│                                                                              │
+│  Poți începe cu un Reel de 30-60 secunde despre istoria cu căruțele – e      │
+│  ușor de filmat și are potențial viral. Dacă vrei, spune-mi și creăm un      │
+│  task în Notion cu una din aceste idei. Ce zici, care ți                     │
+│                                                                              │
+│  Andrei: adauga asta la idei in notion                                       │
+│  Agent: ✅ **Salvat în Notion → Ideas** (status: Draft)                      │
+│  **Titlu:** cauta pe net ce content as putea sa fac despre caru cu bere      │
+│  _Am salvat întrebarea ta și recomandările mele din conversația              │
+│  anterioară._                                                                │
+│                                                                              │
+│  Cerere curentă: ce ai mai sugera in functie de ce ai aflat despre carul cu  │
+│  bere?                                                                       │
+│                                                                              │
+│  Instrucțiuni:                                                               │
+│  - Răspunde direct la întrebare, concis dar complet                          │
+│  - Pentru date (Sheets, Notion, Calendar) APELEAZĂ tool-ul și folosește      │
+│  DOAR output-ul lui                                                          │
+│  - Tool-urile fără parametri se apelează cu input gol — NU trimite JSON      │
+│  inventat ca input                                                           │
+│  - INTERZIS să inventezi parteneri, task-uri, idei, evenimente sau           │
+│  materiale                                                                   │
+│  - Dacă tool-ul returnează SHEETS_EMPTY, NOTION_IDEAS_EMPTY sau 0, spune că  │
+│  lista e goală                                                               │
+│  - Pentru idei în draft: apelează Get Content Ideas cu status='Draft'        │
+│  - Dacă tool-ul returnează EROARE sau eșuează apelul, raportează eroarea —   │
+│  NU completa cu date fictive                                                 │
+│  - Poți crea și actualiza task-uri în Notion și rânduri în Sheets când se    │
+│  cere explicit                                                               │
+│  - La adăugare în Sheets: pune DOAR câmpurile pe care utilizatorul le        │
+│  spune; restul rămân goale                                                   │
+│  - Folosește parametrul detalii doar pentru câmpurile explicite (format      │
+│  key=value|key=value)                                                        │
+│  - Confirmă clar orice modificare făcută în Notion sau Sheets                │
+│  - Răspunde în română, empatic și practic                                    │
+│  - Dacă Andrei împărtășește o idee nouă, sugerează pași concreți de          │
+: utils.py:3258 - 
+LiteLLM completion() model= grok-4.3; provider = xai
+  implementare (nu doar validare)                                             │
+│  - Nu genera briefing complet decât dacă se cere explicit                    │
+│  - Dacă există secțiunea „Rezultate căutare web”, folosește-o pentru         │
+│  răspuns și citează URL-urile relevante                                      │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+LiteLLM completion() model= grok-4.3; provider = xai
+HTTP Request: POST https://api.x.ai/v1/chat/completions "HTTP/1.1 200 OK"
+22:48:19 - LiteLLM:INFOWrapper: Completed Call, calling success_handler
+: utils.py:1260 - Wrapper: Completed Call, calling success_handler
+Repaired JSON: [{"status": "Draft"}, [{"title": "cauta pe net ce content as 
+putea sa fac despre caru cu bere", "category": null, "notes": "Am salvat 
+u00eentrebarea ta u0219i recomandu0103rile mele din conversau021bia 
+anterioaru0103.", "status": "Draft"}]]
+Repaired JSON: [{"status": "Draft"}, [{"title": "cauta pe net ce content as 
+putea sa fac despre caru cu bere", "category": null, "notes": "Am salvat 
+u00eentrebarea ta u0219i recomandu0103rile mele din conversau021bia 
+anterioaru0103.", "status": "Draft"}]]
+🚀 Crew: crew
+└── 📋 Task: dcbe672d-9ba4-4bec-bc43-15605d981ce0
+    Status: Executing Task...
+┌────────────────────────── 🔧 Agent Tool Execution ───────────────────────────┐
+│                                                                              │
+│  Agent: CEO Strategic Advisor                                                │
+│                                                                              │
+│  Thought: Thought: Trebuie să verific ideile existente în Draft din Notion   │
+│  pentru a sugera conținut nou bazat pe ce s-a salvat deja despre Caru' cu    │
+│  Bere.                                                                       │
+│                                                                              │
+│  Using Tool: Get Content Ideas from Notion                                   │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────── Tool Input ─────────────────────────────────┐
+│                                                                              │
+│  [                                                                           │
+│    {                                                                         │
+│      "status": "Draft"                                                       │
+│    },                                                                        │
+│    [                                                                         │
+│      {                                                                       │
+│        "title": "cauta pe net ce content as putea sa fac despre caru cu      │
+│  bere",                                                                      │
+│        "category": null,                                                     │
+│        "notes": "Am salvat u00eentrebarea ta u0219i recomandu0103rile mele   │
+│  din conversau021bia anterioaru0103.",                                       │
+│        "status": "Draft"                                                     │
+│      }                                                                       │
+│    ]                                                                         │
+│  ]                                                                           │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────── Tool Output ─────────────────────────────────┐
+│                                                                              │
+│  Error: the Action Input is not a valid key, value dictionary.               │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+LiteLLM completion() model= grok-4.3; provider = xai
+22:48:19 - LiteLLM:INFO: utils.py:3258 - 
+LiteLLM completion() model= grok-4.3; provider = xai
+HTTP Request: POST https://api.x.ai/v1/chat/completions "HTTP/1.1 200 OK"
+22:48:22 - LiteLLM:INFOWrapper: Completed Call, calling success_handler
+Received None or empty response from LLM call.
+An unknown error occurred. Please check the details below.
+Error details: Invalid response from LLM call - None or empty.
+An unknown error occurred. Please check the details below.
+Error details: Invalid response from LLM call - None or empty.
+🚀 Crew: crew
+└── 📋 Task: dcbe672d-9ba4-4bec-bc43-15605d981ce0
+    Status: Executing Task...
+┌────────────────────────────── 🤖 Agent Started ──────────────────────────────┐
+│                                                                              │
+│  Agent: CEO Strategic Advisor                                                │
+│                                                                              │
+│  Task:                                                                       │
+│  Query utilizator: ce ai mai sugera in functie de ce ai aflat despre carul   │
+│  cu bere?                                                                    │
+│  Profil: Andrei - tată, soț, creator conținut, inginer IT, fondator Ajut     │
+│  Cum Pot                                                                     │
+│  Data: Europe/Bucharest                                                      │
+│                                                                              │
+│                                                                              │
+│  Ești în mod conversațional — Andrei te contactează direct.                  │
+│                                                                              │
+│  --- Conversație recentă în acest canal ---                                  │
+│  Andrei: cauta pe net ce content as putea  sa fac despre caru cu  bere       │
+│  Agent: Andrei, iată câteva idei concrete de content despre Caru' cu Bere,   │
+│  bazate strict pe sursele din căutare:                                       │
+│                                                                              │
+│  1. **Video istoric scurt (Reels/TikTok/YouTube Shorts)**: „Cum ajungea      │
+│  berea cu căruțele trase de cai pe Calea Victoriei acum 130 de ani” –        │
+│  povestește legenda fondării din 1899 și transformarea într-un simbol al     │
+│  Bucureștiului (sursa:                                                       │
+│  https://www.bucuresti.ro/articole/locul-legendar-al-capitalei-la-caru-cu-b  │
+│  ere-acum-130-de-ani-bautura-sosea-in-carele-trase-de-cai-pe-calea-victorie  │
+│  i-406 și https://ro.wikipedia.org/wiki/Caru'_cu_Bere).                      │
+│                                                                              │
+│  2. **Review + experiență personală**: Vizită + degustare de preparate       │
+│  românești tradiționale + berea originală creată în 1879. Poți arăta         │
+│  decorul gotic cu tavanul de 7m, coloane și stucatură (sursa:                │
+│  https://www.carucubere.ro/ și https://www.carucubere.ro/en/).               │
+│                                                                              │
+│  3. **Content „București vechi vs nou”**: Compară atmosfera de la Caru' cu   │
+│  Bere (monument istoric cu istorie de peste 140 de ani) cu localurile        │
+│  moderne – perfect pentru un vlog sau articol care leagă trecutul de         │
+│  prezent (sursa:                                                             │
+│  https://www.bucuresti.ro/locatii/restaurante-caru-cu-bere-631).             │
+│                                                                              │
+│  4. **Behind-the-scenes / povestea familiei Mircea**: Focus pe frații        │
+│  Mircea și moștenirea clădirii – conținut mai profund, autentic, care se     │
+│  potrivește cu valorile tale de impact social și autenticitate.              │
+│                                                                              │
+│  Poți începe cu un Reel de 30-60 secunde despre istoria cu căruțele – e      │
+│  ușor de filmat și are potențial viral. Dacă vrei, spune-mi și creăm un      │
+│  task în Notion cu una din aceste idei. Ce zici, care ți                     │
+│                                                                              │
+│  Andrei: adauga asta la idei in notion                                       │
+│  Agent: ✅ **Salvat în Notion → Ideas** (status: Draft)                      │
+│  **Titlu:** cauta pe net ce content as putea sa fac despre caru cu bere      │
+│  _Am salvat întrebarea ta și recomandările mele din conversația              │
+│  anterioară._                                                                │
+│                                                                              │
+│  Cerere curentă: ce ai mai sugera in functie de ce ai aflat despre carul cu  │
+│  bere?                                                                       │
+│                                                                              │
+│  Instrucțiuni:                                                               │
+│  - Răspunde direct la întrebare, concis dar complet                          │
+│  - Pentru date (Sheets, Notion, Calendar) APELEAZĂ tool-ul și folosește      │
+│  DOAR output-ul lui                                                          │
+│  - Tool-urile fără parametri se apelează cu input gol — NU trimite JSON      │
+│  inventat ca input                                                           │
+│  - INTERZIS să inventezi parteneri, task-uri, idei, evenimente sau           │
+│  materiale                                                                   │
+│  - Dacă tool-ul returnează SHEETS_EMPTY, NOTION_IDEAS_EMPTY sau 0, spune că  │
+│  lista e goală                                                               │
+│  - Pentru idei în draft: apelează Get Content Ideas cu status='Draft'        │
+│  - Dacă tool-ul returnează EROARE sau eșuează apelul, raportează eroarea —   │
+│  NU completa cu date fictive                                                 │
+│  - Poți crea și actualiza task-uri în Notion și rânduri în Sheets când se    │
+│  cere explicit                                                               │
+│  - La adăugare în Sheets: pune DOAR câmpurile pe care utilizatorul le        │
+│  spune; restul rămân goale                                                   │
+│  - Folosește parametrul detalii doar pentru câmpurile explicite (format      │
+│  key=value|key=value)                                                        │
+│  - Confirmă clar orice modificare făcută în Notion sau Sheets                │
+│  - Răspunde în română, empatic și practic                                    │
+│  - Dacă Andrei împărtășește o idee nouă, sugerează pași concreți de          │
+│  implementare (nu doar validare)                                             │
+│  - Nu genera briefing complet decât dacă se cere explicit                    │
+│  - Dacă există secțiunea „Rezultate căutare web”, folosește-o pentru         │
+│  răspuns și citează URL-urile relevante                                      │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+LiteLLM completion() model= grok-4.3; provider = xai
+: utils.py:1260 - Wrapper: Completed Call, calling success_handler
+22:48:22 - LiteLLM:INFO: utils.py:3258 - 
+LiteLLM completion() model= grok-4.3; provider = xai
+HTTP Request: POST https://api.x.ai/v1/chat/completions "HTTP/1.1 200 OK"
+22:48:27 - LiteLLM:INFOWrapper: Completed Call, calling success_handler
+🚀 Crew: crew
+└── 📋 Task: dcbe672d-9ba4-4bec-bc43-15605d981ce0
+    Status: Executing Task...
+┌─────────────────────────── ✅ Agent Final Answer ────────────────────────────┐
+│                                                                              │
+│  Agent: CEO Strategic Advisor                                                │
+│                                                                              │
+│  Final Answer:                                                               │
+│  Pe baza a ce am discutat deja despre Caru' cu Bere (istorie din 1899,       │
+│  căruțe cu bere pe Calea Victoriei, decor gotic, familia Mircea), iată 3     │
+│  sugestii concrete în plus, practice pentru tine:                            │
+│                                                                              │
+│  1. **Reel de 45 secunde „Prima bere creată în 1879 vs. azi”** – compară     │
+│  rețeta originală cu ce se servește acum (poți filma eticheta + un pahar).   │
+│  Adaugă text overlay cu „130+ ani de istorie în același local”.              │
+│                                                                              │
+│  2. **Colaborare micro-influencer / creator local** – invită un istoric sau  │
+│  un foodie bucureștean la o masă tradițională (sarmale + bere) și            │
+│  înregistrează discuția live sau ca podcast scurt. Potențial de reach        │
+│  organic.                                                                    │
+│                                                                              │
+│  3. **Story series pe Instagram (3-4 slide-uri)**: „Cum arăta Caru' cu Bere  │
+│  în 1900 vs. 2024” + poză cu tine acolo + întrebare către followeri: „Ai     │
+│  fost vreodată?” – bun pentru engagement.                                    │
+│                                                                              │
+│  Vrei să salvăm una din astea ca task sau idee nouă în Notion? Sau să        │
+│  alegem una și să facem pașii concreți de implementare (filmare, postare)?   │
+│  Spune-mi ce-ți sună mai bine.                                               │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+🚀 Crew: crew
+└── 📋 Task: dcbe672d-9ba4-4bec-bc43-15605d981ce0
+    Assigned to: CEO Strategic Advisor
+    Status: ✅ Completed
+┌────────────────────────────── Task Completion ───────────────────────────────┐
+│                                                                              │
+│  Task Completed                                                              │
+│  Name: dcbe672d-9ba4-4bec-bc43-15605d981ce0                                  │
+│  Agent: CEO Strategic Advisor                                                │
+│  Tool Args:                                                                  │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────── Crew Completion ───────────────────────────────┐
+│                                                                              │
+│  Crew Execution Completed                                                    │
+│  Name: crew                                                                  │
+│  ID: 6fe5b04c-1916-4ce7-af40-79867f27d8ec                                    │
+│  Tool Args:                                                                  │
+│  Final Output: Pe baza a ce am discutat deja despre Caru' cu Bere (istorie   │
+│  din 1899, căruțe cu bere pe Calea Victoriei, decor gotic, familia Mircea),  │
+│  iată 3 sugestii concrete în plus, practice pentru tine:                     │
+│                                                                              │
+│  1. **Reel de 45 secunde „Prima bere creată în 1879 vs. azi”** – compară     │
+│  rețeta originală cu ce se servește acum (poți filma eticheta + un pahar).   │
+│  Adaugă text overlay cu „130+ ani de istorie în același local”.              │
+│                                                                              │
+│  2. **Colaborare micro-influencer / creator local** – invită un istoric sau  │
+│  un foodie bucureștean la o masă tradițională (sarmale + bere) și            │
+│  înregistrează discuția live sau ca podcast scurt. Potențial de reach        │
+│  organic.                                                                    │
+│                                                                              │
+│  3. **Story series pe Instagram (3-4 slide-uri)**: „Cum arăta Caru' cu Bere  │
+│  în 1900 vs. 2024” + poză cu tine acolo + întrebare către followeri: „Ai     │
+│  fost vreodată?” – bun pentru engagement.                                    │
+│                                                                              │
+│  Vrei să salvăm una din astea ca task sau idee nouă în Notion? Sau să        │
+│  alegem una și să facem pașii concreți de implementare (filmare, postare)?   │
+│  Spune-mi ce-ți sună mai bine.                                               │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+2026-06-18T19:48:27.326617Z [error    ] memory_store_failed            error='[Errno 11001] getaddrinfo failed'
+2026-06-18T19:48:27.327622Z [info     ] crew_completed                 mode=chat
+: utils.py:1260 - Wrapper: Completed Call, calling success_handler
+2026-06-18T19:49:00.331530Z [info     ] crewai_llm_initialized         model=xai/grok-4.3 provider=grok
+2026-06-18T19:49:00.538508Z [info     ] memory_initialized             provider=supabase
+2026-06-18T19:49:00.707839Z [error    ] memory_recall_failed           error='[Errno 11001] getaddrinfo failed'
+2026-06-18T19:49:00.758438Z [info     ] crew_starting                  mode=chat query='Care ar fii pasii concreti pentru prima?'
+┌─────────────────────────── Crew Execution Started ───────────────────────────┐
+│                                                                              │
+│  Crew Execution Started                                                      │
+│  Name: crew                                                                  │
+│  ID: 0271996a-81b0-48ce-9916-289f882d65b5                                    │
+│  Tool Args:                                                                  │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+22:49:00 - LiteLLM:INFO🚀 Crew: crew
+└── 📋 Task: bae74c2a-f286-498c-8b47-fc76c12ff86e
+    Status: Executing Task...
+┌────────────────────────────── 🤖 Agent Started ──────────────────────────────┐
+│                                                                              │
+│  Agent: CEO Strategic Advisor                                                │
+│                                                                              │
+│  Task:                                                                       │
+│  Query utilizator: Care ar fii pasii concreti pentru prima?                  │
+│  Profil: Andrei - tată, soț, creator conținut, inginer IT, fondator Ajut     │
+│  Cum Pot                                                                     │
+│  Data: Europe/Bucharest                                                      │
+│                                                                              │
+│                                                                              │
+│  Ești în mod conversațional — Andrei te contactează direct.                  │
+│                                                                              │
+│  --- Conversație recentă în acest canal ---                                  │
+│  Andrei: cauta pe net ce content as putea  sa fac despre caru cu  bere       │
+│  Agent: Andrei, iată câteva idei concrete de content despre Caru' cu Bere,   │
+│  bazate strict pe sursele din căutare:                                       │
+│                                                                              │
+│  1. **Video istoric scurt (Reels/TikTok/YouTube Shorts)**: „Cum ajungea      │
+│  berea cu căruțele trase de cai pe Calea Victoriei acum 130 de ani” –        │
+│  povestește legenda fondării din 1899 și transformarea într-un simbol al     │
+│  Bucureștiului (sursa:                                                       │
+│  https://www.bucuresti.ro/articole/locul-legendar-al-capitalei-la-caru-cu-b  │
+│  ere-acum-130-de-ani-bautura-sosea-in-carele-trase-de-cai-pe-calea-victorie  │
+│  i-406 și https://ro.wikipedia.org/wiki/Caru'_cu_Bere).                      │
+│                                                                              │
+│  2. **Review + experiență personală**: Vizită + degustare de preparate       │
+│  românești tradiționale + berea originală creată în 1879. Poți arăta         │
+│  decorul gotic cu tavanul de 7m, coloane și stucatură (sursa:                │
+│  https://www.carucubere.ro/ și https://www.carucubere.ro/en/).               │
+│                                                                              │
+│  3. **Content „București vechi vs nou”**: Compară atmosfera de la Caru' cu   │
+│  Bere (monument istoric cu istorie de peste 140 de ani) cu localurile        │
+│  moderne – perfect pentru un vlog sau articol care leagă trecutul de         │
+│  prezent (sursa:                                                             │
+│  https://www.bucuresti.ro/locatii/restaurante-caru-cu-bere-631).             │
+│                                                                              │
+│  4. **Behind-the-scenes / povestea familiei Mircea**: Focus pe frații        │
+│  Mircea și moștenirea clădirii – conținut mai profund, autentic, care se     │
+│  potrivește cu valorile tale de impact social și autenticitate.              │
+│                                                                              │
+│  Poți începe cu un Reel de 30-60 secunde despre istoria cu căruțele – e      │
+│  ușor de filmat și are potențial viral. Dacă vrei, spune-mi și creăm un      │
+│  task în Notion cu una din aceste idei. Ce zici, care ți                     │
+│                                                                              │
+│  Andrei: adauga asta la idei in notion                                       │
+│  Agent: ✅ **Salvat în Notion → Ideas** (status: Draft)                      │
+│  **Titlu:** cauta pe net ce content as putea sa fac despre caru cu bere      │
+│  _Am salvat întrebarea ta și recomandările mele din conversația              │
+│  anterioară._                                                                │
+│                                                                              │
+│  Andrei: ce ai mai sugera in functie de ce ai aflat despre carul cu bere?    │
+│  Agent: Pe baza a ce am discutat deja despre Caru' cu Bere (istorie din      │
+│  1899, căruțe cu bere pe Calea Victoriei, decor gotic, familia Mircea),      │
+│  iată 3 sugestii concrete în plus, practice pentru tine:                     │
+│                                                                              │
+│  1. **Reel de 45 secunde „Prima bere creată în 1879 vs. azi”** – compară     │
+│  rețeta originală cu ce se servește acum (poți filma eticheta + un pahar).   │
+│  Adaugă text overlay cu „130+ ani de istorie în același local”.              │
+│                                                                              │
+│  2. **Colaborare micro-influencer / creator local** – invită un istoric sau  │
+│  un foodie bucureștean la o masă tradițională (sarmale + bere) și            │
+│  înregistrează discuția live sau ca podcast scurt. Potențial de reach        │
+│  organic.                                                                    │
+│                                                                              │
+│  3. **Story series pe Instagram (3-4 slide-uri)**: „Cum arăta Caru' cu Bere  │
+│  în 1900 vs. 2024” + poză cu tine acolo + întrebare către followeri: „Ai     │
+│  fost vreodată?” – bun pentru engagement.                                    │
+│                                                                              │
+│  Vrei să salvăm una din astea ca task sau idee nouă în Notion? Sau să        │
+│  alegem una și să facem pașii concreți de implementare (filmare, postare)?   │
+│  Spune-mi ce-ți sună mai bine.                                               │
+│                                                                              │
+│  Cerere curentă: Care ar fii pasii concreti pentru prima?                    │
+│                                                                              │
+│  Instrucțiuni:                                                               │
+│  - Răspunde direct la întrebare, concis dar complet                          │
+│  - Pentru date (Sheets, Notion, Calendar) APELEAZĂ tool-ul și folosește      │
+│  DOAR output-ul lui                                                          │
+│  - Tool-urile fără parametri se apelează cu input gol — NU trimite JSON      │
+│  inventat ca input                                                           │
+│  - INTERZIS să inventezi parteneri, task-uri, idei, evenimente sau           │
+│  materiale                                                                   │
+│  - Dacă tool-ul returnează SHEETS_EMPTY, NOTION_IDEAS_EMPTY sau 0, spune că  │
+│  lista e goală                                                               │
+│  - Pentru idei în draft: apelează Get Content Ideas cu status='Draft'        │
+│  - Dacă tool-ul returnează EROARE sau eșuează apelul, raportează eroarea —   │
+│  NU completa cu date fictive                                                 │
+│  - Poți crea și actualiza task-uri în Notion și rânduri în Sheets când se    │
+│  cere explicit                                                               │
+│  - La adăugare în Sheets: pune DOAR : utils.py:3258 - 
+LiteLLM completion() model= grok-4.3; provider = xai
+câmpurile pe care utilizatorul le        │
+│  spune; restul rămân goale                                                   │
+│  - Folosește parametrul detalii doar pentru câmpurile explicite (format      │
+│  key=value|key=value)                                                        │
+│  - Confirmă clar orice modificare făcută în Notion sau Sheets                │
+│  - Răspunde în română, empatic și practic                                    │
+│  - Dacă Andrei împărtășește o idee nouă, sugerează pași concreți de          │
+│  implementare (nu doar validare)                                             │
+│  - Nu genera briefing complet decât dacă se cere explicit                    │
+│  - Dacă există secțiunea „Rezultate căutare web”, folosește-o pentru         │
+│  răspuns și citează URL-urile relevante                                      │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+LiteLLM completion() model= grok-4.3; provider = xai
+HTTP Request: POST https://api.x.ai/v1/chat/completions "HTTP/1.1 200 OK"
+22:49:05 - LiteLLM:INFOWrapper: Completed Call, calling success_handler
+🚀 Crew: crew
+└── 📋 Task: bae74c2a-f286-498c-8b47-fc76c12ff86e
+    Status: Executing Task...
+┌─────────────────────────── ✅ Agent Final Answer ────────────────────────────┐
+│                                                                              │
+│  Agent: CEO Strategic Advisor                                                │
+│                                                                              │
+│  Final Answer:                                                               │
+│  Pașii concreți pentru primul Reel („Prima bere creată în 1879 vs. azi”, 45  │
+│  secunde):                                                                   │
+│                                                                              │
+│  1. **Pregătire rapidă (10 min)**: Caută 2-3 fapte scurte despre berea       │
+│  originală din 1879 (rețetă, istorie). Folosește sursele deja menționate     │
+│  (carucubere.ro + Wikipedia). Notează text overlay: „1879 vs 2024 – 145 de   │
+│  ani în același pahar”.                                                      │
+│                                                                              │
+│  2. **Filmare (15-20 min la fața locului)**:                                 │
+│     - Filmul eticheta sticlei vechi + un pahar cu bere actuală.              │
+│     - Adaugă un plan scurt cu tine sau cu localul (decor gotic).             │
+│     - Țintește 45 secunde: 15 sec istorie, 15 sec comparație, 15 sec         │
+│  încheiere cu întrebare.                                                     │
+│                                                                              │
+│  3. **Editare simplă (20 min)**:                                             │
+│     - App-ul Reel/TikTok sau CapCut.                                         │
+│     - Text overlay + tranziții rapide + muzică subtilă românească.           │
+│     - Export 1080p vertical.                                                 │
+│                                                                              │
+│  4. **Postare**: Publică pe Instagram Reels + TikTok + Stories cu întrebare  │
+│  „Ai încercat berea originală?”. Programează pentru seară (când e            │
+│  engagement bun la content local).                                           │
+│                                                                              │
+│  Dacă vrei, salvăm asta ca task în Notion cu prioritate Medium. Spune-mi și  │
+│  o fac.                                                                      │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+🚀 Crew: crew
+└── 📋 Task: bae74c2a-f286-498c-8b47-fc76c12ff86e
+    Assigned to: CEO Strategic Advisor
+    Status: ✅ Completed
+┌────────────────────────────── Task Completion ───────────────────────────────┐
+│                                                                              │
+│  Task Completed                                                              │
+│  Name: bae74c2a-f286-498c-8b47-fc76c12ff86e                                  │
+│  Agent: CEO Strategic Advisor                                                │
+│  Tool Args:                                                                  │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────── Crew Completion ───────────────────────────────┐
+│                                                                              │
+│  Crew Execution Completed                                                    │
+│  Name: crew                                                                  │
+│  ID: 0271996a-81b0-48ce-9916-289f882d65b5                                    │
+│  Tool Args:                                                                  │
+│  Final Output: Pașii concreți pentru primul Reel („Prima bere creată în      │
+│  1879 vs. azi”, 45 secunde):                                                 │
+│                                                                              │
+│  1. **Pregătire rapidă (10 min)**: Caută 2-3 fapte scurte despre berea       │
+│  originală din 1879 (rețetă, istorie). Folosește sursele deja menționate     │
+│  (carucubere.ro + Wikipedia). Notează text overlay: „1879 vs 2024 – 145 de   │
+│  ani în același pahar”.                                                      │
+│                                                                              │
+│  2. **Filmare (15-20 min la fața locului)**:                                 │
+│     - Filmul eticheta sticlei vechi + un pahar cu bere actuală.              │
+│     - Adaugă un plan scurt cu tine sau cu localul (decor gotic).             │
+│     - Țintește 45 secunde: 15 sec istorie, 15 sec comparație, 15 sec         │
+│  încheiere cu întrebare.                                                     │
+│                                                                              │
+│  3. **Editare simplă (20 min)**:                                             │
+│     - App-ul Reel/TikTok sau CapCut.                                         │
+│     - Text overlay + tranziții rapide + muzică subtilă românească.           │
+│     - Export 1080p vertical.                                                 │
+│                                                                              │
+│  4. **Postare**: Publică pe Instagram Reels + TikTok + Stories cu întrebare  │
+│  „Ai încercat berea originală?”. Programează pentru seară (când e            │
+│  engagement bun la content local).                                           │
+│                                                                              │
+│  Dacă vrei, salvăm asta ca task în Notion cu prioritate Medium. Spune-mi și  │
+│  o fac.                                                                      │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+2026-06-18T19:49:05.605251Z [error    ] memory_store_failed            error='[Errno 11001] getaddrinfo failed'
+2026-06-18T19:49:05.605251Z [info     ] crew_completed                 mode=chat
+: utils.py:1260 - Wrapper: Completed Call, calling success_handler
+response: https://en.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=faptele%20de%20la%20primul%20pas 200
+response: https://grokipedia.com/api/typeahead?query=faptele+de+la+primul+pas&limit=1 200
+response: https://yandex.com/search/site/?text=faptele+de+la+primul+pas&web=1&searchid=6947569 200
+2026-06-18T19:49:38.576813Z [info     ] web_search_completed           query='faptele de la primul pas' results=5
+2026-06-18T19:49:38.577808Z [info     ] crewai_llm_initialized         model=xai/grok-4.3 provider=grok
+2026-06-18T19:49:38.807136Z [info     ] memory_initialized             provider=supabase
+2026-06-18T19:49:38.982928Z [error    ] memory_recall_failed           error='[Errno 11001] getaddrinfo failed'
+2026-06-18T19:49:39.035623Z [info     ] crew_starting                  mode=chat query='[Căutare web solicitată explicit]\nTermen căutat: faptele de la primul pas\nRăspunde la întrebare folo'
+┌─────────────────────────── Crew Execution Started ───────────────────────────┐
+│                                                                              │
+│  Crew Execution Started                                                      │
+│  Name: crew                                                                  │
+│  ID: bdf87a74-1c50-47c9-b9bf-67670ae25018                                    │
+│  Tool Args:                                                                  │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+22:49:39 - LiteLLM:INFO🚀 Crew: crew
+└── 📋 Task: bff44f57-76f2-408a-885d-4c02109259c7
+    Status: Executing Task...
+┌────────────────────────────── 🤖 Agent Started ──────────────────────────────┐
+│                                                                              │
+│  Agent: CEO Strategic Advisor                                                │
+│                                                                              │
+│  Task:                                                                       │
+│  Query utilizator: [Căutare web solicitată explicit]                         │
+│  Termen căutat: faptele de la primul pas                                     │
+│  Răspunde la întrebare folosind rezultatele web de mai sus.                  │
+│  Profil: Andrei - tată, soț, creator conținut, inginer IT, fondator Ajut     │
+│  Cum Pot                                                                     │
+│  Data: Europe/Bucharest                                                      │
+│                                                                              │
+│                                                                              │
+│  Ești în mod conversațional — Andrei te contactează direct.                  │
+│                                                                              │
+│  --- Conversație recentă în acest canal ---                                  │
+│  Andrei: adauga asta la idei in notion                                       │
+│  Agent: ✅ **Salvat în Notion → Ideas** (status: Draft)                      │
+│  **Titlu:** cauta pe net ce content as putea sa fac despre caru cu bere      │
+│  _Am salvat întrebarea ta și recomandările mele din conversația              │
+│  anterioară._                                                                │
+│                                                                              │
+│  Andrei: ce ai mai sugera in functie de ce ai aflat despre carul cu bere?    │
+│  Agent: Pe baza a ce am discutat deja despre Caru' cu Bere (istorie din      │
+│  1899, căruțe cu bere pe Calea Victoriei, decor gotic, familia Mircea),      │
+│  iată 3 sugestii concrete în plus, practice pentru tine:                     │
+│                                                                              │
+│  1. **Reel de 45 secunde „Prima bere creată în 1879 vs. azi”** – compară     │
+│  rețeta originală cu ce se servește acum (poți filma eticheta + un pahar).   │
+│  Adaugă text overlay cu „130+ ani de istorie în același local”.              │
+│                                                                              │
+│  2. **Colaborare micro-influencer / creator local** – invită un istoric sau  │
+│  un foodie bucureștean la o masă tradițională (sarmale + bere) și            │
+│  înregistrează discuția live sau ca podcast scurt. Potențial de reach        │
+│  organic.                                                                    │
+│                                                                              │
+│  3. **Story series pe Instagram (3-4 slide-uri)**: „Cum arăta Caru' cu Bere  │
+│  în 1900 vs. 2024” + poză cu tine acolo + întrebare către followeri: „Ai     │
+│  fost vreodată?” – bun pentru engagement.                                    │
+│                                                                              │
+│  Vrei să salvăm una din astea ca task sau idee nouă în Notion? Sau să        │
+│  alegem una și să facem pașii concreți de implementare (filmare, postare)?   │
+│  Spune-mi ce-ți sună mai bine.                                               │
+│                                                                              │
+│  Andrei: Care ar fii pasii concreti pentru prima?                            │
+│  Agent: Pașii concreți pentru primul Reel („Prima bere creată în 1879 vs.    │
+│  azi”, 45 secunde):                                                          │
+│                                                                              │
+│  1. **Pregătire rapidă (10 min)**: Caută 2-3 fapte scurte despre berea       │
+│  originală din 1879 (rețetă, istorie). Folosește sursele deja menționate     │
+│  (carucubere.ro + Wikipedia). Notează text overlay: „1879 vs 2024 – 145 de   │
+│  ani în același pahar”.                                                      │
+│                                                                              │
+│  2. **Filmare (15-20 min la fața locului)**:                                 │
+│     - Filmul eticheta sticlei vechi + un pahar cu bere actuală.              │
+│     - Adaugă un plan scurt cu tine sau cu localul (decor gotic).             │
+│     - Țintește 45 secunde: 15 sec istorie, 15 sec comparație, 15 sec         │
+│  încheiere cu întrebare.                                                     │
+│                                                                              │
+│  3. **Editare simplă (20 min)**:                                             │
+│     - App-ul Reel/TikTok sau CapCut.                                         │
+│     - Text overlay + tranziții rapide + muzică subtilă românească.           │
+│     - Export 1080p vertical.                                                 │
+│                                                                              │
+│  4. **Postare**: Publică pe Instagram Reels + TikTok + Stories cu întrebare  │
+│  „Ai încercat berea originală?”. Programează pentru seară (când e            │
+│  engagement bun la content local).                                           │
+│                                                                              │
+│  Dacă vrei, salvăm asta ca task în Notion cu prioritate Medium. Spune-mi și  │
+│  o fac.                                                                      │
+│                                                                              │
+│  --- Rezultate căutare web (5) ---                                           │
+│  1. De la targă la primul pas: miracolele medicale de la „Sfântul Sava       │
+│  cel...                                                                      │
+│     Primul aparat a costat peste 60.000 de euro, iar acum avem șase astfel   │
+│  de dispozitive”, spune Alina Ion. Pe lângă tratamentele personalizate și    │
+│  echipamentele de ultimă generație, atmosfera contează la fel de mult.       │
+│     URL:                                                                     │
+│  https://www.capital.ro/de-la-targa-la-primul-pas-miracolele-medicale-de-la  │
+│  -sfantul-sava-cel-sfintit.html                                              │
+│                                                                              │
+│  2. Separarea în fapt: primul pas spre claritate | TikTok                    │
+│     Separarea în fapt este adesea primul pas spre claritate și liniște. Nu   │
+│  este o „fugă”, ci o recunoaștere a realității că drumurile soților s-au     │
+│  despărțit.                                                                  │
+│     URL: https://www.tiktok.com/@avandreeazone/video/7628161015917579542     │
+│                                                                              │
+│  3. De la primul pas în locație până la ultimul detaliu de pe masă -         │
+│  YouTube                                                                     │
+│     О сервисе Прессе Авторские права Связаться с нами Авторам                : utils.py:3258 - 
+LiteLLM completion() model= grok-4.3; provider = xai
+
+│  Рекламодателям...                                                           │
+│     URL: https://www.youtube.com/shorts/v-OotQo0bgg                          │
+│                                                                              │
+│  4. A pășit omul pe Lună? Cel mai puternic argument pe care îl are... |      │
+│  Digi24                                                                      │
+│     Dumitru Prunariu, singurul român care a ajuns în spațiu, are câteva      │
+│  argumente pentru a contracara teoriile conspirației care neagă faptul că    │
+│  americanii au ajuns pe Lună.Citiți și: Teoriile conspirației continuă să    │
+│  aibă succes, la 50 de ani de la primul pas pe Lună.                         │
+│     URL:                                                                     │
+│  https://www.digi24.ro/stiri/sci-tech/a-pasit-omul-pe-luna-cel-mai-puternic  │
+│  -argument-pe-care-il-are-dumitru-prunariu-pentru-a-demonta-teoriile-conspi  │
+│  ratiei-1162993                                                              │
+│                                                                              │
+│  5. Testul Papanicolau (PAP): cui se adreseaza si ce indica rezultatele      │
+│     Este o analiza care poate realmente salva vieti, fiind stiut faptul ca,  │
+│  din pacate, cancerul de col uterin este una din patologiile des intalnite   │
+│  in ultima vreme. Tot cu ajutorul testului Babes Papanicolau se identifica   │
+│  infectiile genitale, fiind, de fapt, primul pas catre vindecarea acestora.  │
+│     URL:                                                                     │
+│  https://www.csid.ro/boli-afectiuni/testul-papanicolau-pap-cui-se-adreseaza  │
+│  -si-ce-indica-rezultatele-16189955/                                         │
+│                                                                              │
+│  Instrucțiune: Bazează răspunsul pe aceste rezultate. Menționează sursele    │
+│  (URL) când folosești informații de aici.                                    │
+│                                                                              │
+│  Cerere curentă: [Căutare web solicitată explicit]                           │
+│  Termen căutat: faptele de la primul pas                                     │
+│  Răspunde la întrebare folosind rezultatele web de mai sus.                  │
+│                                                                              │
+│  Instrucțiuni:                                                               │
+│  - Răspunde direct la întrebare, concis dar complet                          │
+│  - Pentru date (Sheets, Notion, Calendar) APELEAZĂ tool-ul și folosește      │
+│  DOAR output-ul lui                                                          │
+│  - Tool-urile fără parametri se apelează cu input gol — NU trimite JSON      │
+│  inventat ca input                                                           │
+│  - INTERZIS să inventezi parteneri, task-uri, idei, evenimente sau           │
+│  materiale                                                                   │
+│  - Dacă tool-ul returnează SHEETS_EMPTY, NOTION_IDEAS_EMPTY sau 0, spune că  │
+│  lista e goală                                                               │
+│  - Pentru idei în draft: apelează Get Content Ideas cu status='Draft'        │
+│  - Dacă tool-ul returnează EROARE sau eșuează apelul, raportează eroarea —   │
+│  NU completa cu date fictive                                                 │
+│  - Poți crea și actualiza task-uri în Notion și rânduri în Sheets când se    │
+│  cere explicit                                                               │
+│  - La adăugare în Sheets: pune DOAR câmpurile pe care utilizatorul le        │
+│  spune; restul rămân goale                                                   │
+│  - Folosește parametrul detalii doar pentru câmpurile explicite (format      │
+│  key=value|key=value)                                                        │
+│  - Confirmă clar orice modificare făcută în Notion sau Sheets                │
+│  - Răspunde în română, empatic și practic                                    │
+│  - Dacă Andrei împărtășește o idee nouă, sugerează pași concreți de          │
+│  implementare (nu doar validare)                                             │
+│  - Nu genera briefing complet decât dacă se cere explicit                    │
+│  - Dacă există secțiunea „Rezultate căutare web”, folosește-o pentru         │
+│  răspuns și citează URL-urile relevante                                      │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+LiteLLM completion() model= grok-4.3; provider = xai
+HTTP Request: POST https://api.x.ai/v1/chat/completions "HTTP/1.1 200 OK"
+22:49:45 - LiteLLM:INFOWrapper: Completed Call, calling success_handler
+🚀 Crew: crew
+└── 📋 Task: bff44f57-76f2-408a-885d-4c02109259c7
+    Status: Executing Task...
+┌─────────────────────────── ✅ Agent Final Answer ────────────────────────────┐
+│                                                                              │
+│  Agent: CEO Strategic Advisor                                                │
+│                                                                              │
+│  Final Answer:                                                               │
+│  Andrei, căutarea „faptele de la primul pas” a returnat rezultate complet    │
+│  irelevante pentru istoria berii de la Caru' cu Bere (nu menționează 1879,   │
+│  rețete sau localul). Iată ce am găsit:                                      │
+│                                                                              │
+│  1. Articol despre miracole medicale la Spitalul „Sfântul Sava”              │
+│  (https://www.capital.ro/de-la-targa-la-primul-pas-miracolele-medicale-de-l  │
+│  a-sfantul-sava-cel-sfintit.html) – vorbește de aparate medicale scumpe și   │
+│  atmosferă.                                                                  │
+│                                                                              │
+│  2. Video TikTok despre separarea în fapt ca prim pas spre claritate         │
+│  (https://www.tiktok.com/@avandreeazone/video/7628161015917579542).          │
+│                                                                              │
+│  3. Short YouTube despre detalii de pe masă                                  │
+│  (https://www.youtube.com/shorts/v-OotQo0bgg).                               │
+│                                                                              │
+│  4. Articol Digi24 cu Dumitru Prunariu despre primul pas pe Lună             │
+│  (https://www.digi24.ro/stiri/sci-tech/a-pasit-omul-pe-luna-cel-mai-puterni  │
+│  c-argument-pe-care-il-are-dumitru-prunariu-pentru-a-demonta-teoriile-consp  │
+│  iratiei-1162993).                                                           │
+│                                                                              │
+│  5. Info despre testul Papanicolau ca prim pas spre vindecare                │
+│  (https://www.csid.ro/boli-afectiuni/testul-papanicolau-pap-cui-se-adreseaz  │
+│  a-si-ce-indica-rezultatele-16189955/).                                      │
+│                                                                              │
+│  Nu ajută la reel-ul cu bere. Vrei să reformulez căutarea (ex. „Caru cu      │
+│  Bere istorie 1879 bere originală”) sau să mergem pe varianta 2/3 din        │
+│  sugestiile anterioare? Spune-mi cum vrei să continuăm.                      │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+🚀 Crew: crew
+└── 📋 Task: bff44f57-76f2-408a-885d-4c02109259c7
+    Assigned to: CEO Strategic Advisor
+    Status: ✅ Completed
+┌────────────────────────────── Task Completion ───────────────────────────────┐
+│                                                                              │
+│  Task Completed                                                              │
+│  Name: bff44f57-76f2-408a-885d-4c02109259c7                                  │
+│  Agent: CEO Strategic Advisor                                                │
+│  Tool Args:                                                                  │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+: utils.py:1260 - Wrapper: Completed Call, calling success_handler
+┌────────────────────────────── Crew Completion ───────────────────────────────┐
+│                                                                              │
+│  Crew Execution Completed                                                    │
+│  Name: crew                                                                  │
+│  ID: bdf87a74-1c50-47c9-b9bf-67670ae25018                                    │
+│  Tool Args:                                                                  │
+│  Final Output: Andrei, căutarea „faptele de la primul pas” a returnat        │
+│  rezultate complet irelevante pentru istoria berii de la Caru' cu Bere (nu   │
+│  menționează 1879, rețete sau localul). Iată ce am găsit:                    │
+│                                                                              │
+│  1. Articol despre miracole medicale la Spitalul „Sfântul Sava”              │
+│  (https://www.capital.ro/de-la-targa-la-primul-pas-miracolele-medicale-de-l  │
+│  a-sfantul-sava-cel-sfintit.html) – vorbește de aparate medicale scumpe și   │
+│  atmosferă.                                                                  │
+│                                                                              │
+│  2. Video TikTok despre separarea în fapt ca prim pas spre claritate         │
+│  (https://www.tiktok.com/@avandreeazone/video/7628161015917579542).          │
+│                                                                              │
+│  3. Short YouTube despre detalii de pe masă                                  │
+│  (https://www.youtube.com/shorts/v-OotQo0bgg).                               │
+│                                                                              │
+│  4. Articol Digi24 cu Dumitru Prunariu despre primul pas pe Lună             │
+│  (https://www.digi24.ro/stiri/sci-tech/a-pasit-omul-pe-luna-cel-mai-puterni  │
+│  c-argument-pe-care-il-are-dumitru-prunariu-pentru-a-demonta-teoriile-consp  │
+│  iratiei-1162993).                                                           │
+│                                                                              │
+│  5. Info despre testul Papanicolau ca prim pas spre vindecare                │
+│  (https://www.csid.ro/boli-afectiuni/testul-papanicolau-pap-cui-se-adreseaz  │
+│  a-si-ce-indica-rezultatele-16189955/).                                      │
+│                                                                              │
+│  Nu ajută la reel-ul cu bere. Vrei să reformulez căutarea (ex. „Caru cu      │
+│  Bere istorie 1879 bere originală”) sau să mergem pe varianta 2/3 din        │
+│  sugestiile anterioare? Spune-mi cum vrei să continuăm.                      │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+2026-06-18T19:49:45.606647Z [error    ] memory_store_failed            error='[Errno 11001] getaddrinfo failed'
+2026-06-18T19:49:45.606647Z [info     ] crew_completed                 mode=chat
+2026-06-18T19:50:14.662310Z [info     ] crewai_llm_initialized         model=xai/grok-4.3 provider=grok
+2026-06-18T19:50:14.869447Z [info     ] memory_initialized             provider=supabase
+2026-06-18T19:50:15.034751Z [error    ] memory_recall_failed           error='[Errno 11001] getaddrinfo failed'
+2026-06-18T19:50:15.086109Z [info     ] crew_starting                  mode=chat query='fa un rezumat la ce ai gasit pe paginile astea'
+┌─────────────────────────── Crew Execution Started ───────────────────────────┐
+│                                                                              │
+│  Crew Execution Started                                                      │
+│  Name: crew                                                                  │
+│  ID: e34aa110-4302-426d-b37b-656e4e0bcb6a                                    │
+│  Tool Args:                                                                  │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+22:50:15 - LiteLLM:INFO🚀 Crew: crew
+└── 📋 Task: dfd0805d-b3f2-4669-a9df-aea0badae7fc
+    Status: Executing Task...
+┌────────────────────────────── 🤖 Agent Started ──────────────────────────────┐
+│                                                                              │
+│  Agent: CEO Strategic Advisor                                                │
+│                                                                              │
+│  Task:                                                                       │
+│  Query utilizator: fa un rezumat la ce ai gasit pe paginile astea            │
+│  Profil: Andrei - tată, soț, creator conținut, inginer IT, fondator Ajut     │
+│  Cum Pot                                                                     │
+│  Data: Europe/Bucharest                                                      │
+│                                                                              │
+│                                                                              │
+│  Ești în mod conversațional — Andrei te contactează direct.                  │
+│                                                                              │
+│  --- Conversație recentă în acest canal ---                                  │
+│  Andrei: ce ai mai sugera in functie de ce ai aflat despre carul cu bere?    │
+│  Agent: Pe baza a ce am discutat deja despre Caru' cu Bere (istorie din      │
+│  1899, căruțe cu bere pe Calea Victoriei, decor gotic, familia Mircea),      │
+│  iată 3 sugestii concrete în plus, practice pentru tine:                     │
+│                                                                              │
+│  1. **Reel de 45 secunde „Prima bere creată în 1879 vs. azi”** – compară     │
+│  rețeta originală cu ce se servește acum (poți filma eticheta + un pahar).   │
+│  Adaugă text overlay cu „130+ ani de istorie în același local”.              │
+│                                                                              │
+│  2. **Colaborare micro-influencer / creator local** – invită un istoric sau  │
+│  un foodie bucureștean la o masă tradițională (sarmale + bere) și            │
+│  înregistrează discuția live sau ca podcast scurt. Potențial de reach        │
+│  organic.                                                                    │
+│                                                                              │
+│  3. **Story series pe Instagram (3-4 slide-uri)**: „Cum arăta Caru' cu Bere  │
+│  în 1900 vs. 2024” + poză cu tine acolo + întrebare către followeri: „Ai     │
+│  fost vreodată?” – bun pentru engagement.                                    │
+│                                                                              │
+│  Vrei să salvăm una din astea ca task sau idee nouă în Notion? Sau să        │
+│  alegem una și să facem pașii concreți de implementare (filmare, postare)?   │
+│  Spune-mi ce-ți sună mai bine.                                               │
+│                                                                              │
+│  Andrei: Care ar fii pasii concreti pentru prima?                            │
+│  Agent: Pașii concreți pentru primul Reel („Prima bere creată în 1879 vs.    │
+│  azi”, 45 secunde):                                                          │
+│                                                                              │
+│  1. **Pregătire rapidă (10 min)**: Caută 2-3 fapte scurte despre berea       │
+│  originală din 1879 (rețetă, istorie). Folosește sursele deja menționate     │
+│  (carucubere.ro + Wikipedia). Notează text overlay: „1879 vs 2024 – 145 de   │
+│  ani în același pahar”.                                                      │
+│                                                                              │
+│  2. **Filmare (15-20 min la fața locului)**:                                 │
+│     - Filmul eticheta sticlei vechi + un pahar cu bere actuală.              │
+│     - Adaugă un plan scurt cu tine sau cu localul (decor gotic).             │
+│     - Țintește 45 secunde: 15 sec istorie, 15 sec comparație, 15 sec         │
+│  încheiere cu întrebare.                                                     │
+│                                                                              │
+│  3. **Editare simplă (20 min)**:                                             │
+│     - App-ul Reel/TikTok sau CapCut.                                         │
+│     - Text overlay + tranziții rapide + muzică subtilă românească.           │
+│     - Export 1080p vertical.                                                 │
+│                                                                              │
+│  4. **Postare**: Publică pe Instagram Reels + TikTok + Stories cu întrebare  │
+│  „Ai încercat berea originală?”. Programează pentru seară (când e            │
+│  engagement bun la content local).                                           │
+│                                                                              │
+│  Dacă vrei, salvăm asta ca task în Notion cu prioritate Medium. Spune-mi și  │
+│  o fac.                                                                      │
+│                                                                              │
+│  Andrei: Cauta pe net faptele de la primul pas                               │
+│  Agent: Andrei, căutarea „faptele de la primul pas” a returnat rezultate     │
+│  complet irelevante pentru istoria berii de la Caru' cu Bere (nu             │
+│  menționează 1879, rețete sau localul). Iată ce am găsit:                    │
+│                                                                              │
+│  1. Articol despre miracole medicale la Spitalul „Sfântul Sava”              │
+│  (https://www.capital.ro/de-la-targa-la-primul-pas-miracolele-medicale-de-l  │
+│  a-sfantul-sava-cel-sfintit.html) – vorbește de aparate medicale scumpe și   │
+│  atmosferă.                                                                  │
+│                                                                              │
+│  2. Video TikTok despre separarea în fapt ca prim pas spre claritate         │
+│  (https://www.tiktok.com/@avandreeazone/video/7628161015917579542).          │
+│                                                                              │
+│  3. Short YouTube despre detalii de pe masă                                  │
+│  (https://www.youtube.com/shorts/v-OotQo0bgg).                               │
+│                                                                              │
+│  4. Articol Digi24 cu Dumitru Prunariu despre primul pas pe Lună             │
+│  (https://www.digi24.ro/stiri/sci-tech/a-pasit-omul-pe-luna-cel-mai-puterni  │
+│  c-argument-pe-care-il-are-dumitru-prunariu-pentru-a-demonta-teoriile-consp  │
+│  iratiei-1162993).                                                           │
+│                                                                              │
+│  5. Info despre testul Papanicolau ca prim pas spre vindecare                │
+│  (https://www.csid.ro/boli-afectiuni/testul-papanicolau-pap-cui-se-adreseaz  │
+│  a-si-ce-indica-rezultatele-16189955/).                                      │
+│                                                                              │
+│  Nu ajută la reel-ul cu bere. Vrei să reformulez căutarea (ex. „Caru cu      │
+│  Bere istorie 1879 bere originală”) sau să mergem pe varianta 2/3 din        │
+│  sugestiile anterioare? Spune-mi cum vrei să continuăm. : utils.py:3258 - 
+LiteLLM completion() model= grok-4.3; provider = xai
+                     │
+│                                                                              │
+│  Cerere curentă: fa un rezumat la ce ai gasit pe paginile astea              │
+│                                                                              │
+│  Instrucțiuni:                                                               │
+│  - Răspunde direct la întrebare, concis dar complet                          │
+│  - Pentru date (Sheets, Notion, Calendar) APELEAZĂ tool-ul și folosește      │
+│  DOAR output-ul lui                                                          │
+│  - Tool-urile fără parametri se apelează cu input gol — NU trimite JSON      │
+│  inventat ca input                                                           │
+│  - INTERZIS să inventezi parteneri, task-uri, idei, evenimente sau           │
+│  materiale                                                                   │
+│  - Dacă tool-ul returnează SHEETS_EMPTY, NOTION_IDEAS_EMPTY sau 0, spune că  │
+│  lista e goală                                                               │
+│  - Pentru idei în draft: apelează Get Content Ideas cu status='Draft'        │
+│  - Dacă tool-ul returnează EROARE sau eșuează apelul, raportează eroarea —   │
+│  NU completa cu date fictive                                                 │
+│  - Poți crea și actualiza task-uri în Notion și rânduri în Sheets când se    │
+│  cere explicit                                                               │
+│  - La adăugare în Sheets: pune DOAR câmpurile pe care utilizatorul le        │
+│  spune; restul rămân goale                                                   │
+│  - Folosește parametrul detalii doar pentru câmpurile explicite (format      │
+│  key=value|key=value)                                                        │
+│  - Confirmă clar orice modificare făcută în Notion sau Sheets                │
+│  - Răspunde în română, empatic și practic                                    │
+│  - Dacă Andrei împărtășește o idee nouă, sugerează pași concreți de          │
+│  implementare (nu doar validare)                                             │
+│  - Nu genera briefing complet decât dacă se cere explicit                    │
+│  - Dacă există secțiunea „Rezultate căutare web”, folosește-o pentru         │
+│  răspuns și citează URL-urile relevante                                      │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+LiteLLM completion() model= grok-4.3; provider = xai
+HTTP Request: POST https://api.x.ai/v1/chat/completions "HTTP/1.1 200 OK"
+22:50:20 - LiteLLM:INFOWrapper: Completed Call, calling success_handler
+🚀 Crew: crew
+└── 📋 Task: dfd0805d-b3f2-4669-a9df-aea0badae7fc
+    Status: Executing Task...
+┌─────────────────────────── ✅ Agent Final Answer ────────────────────────────┐
+│                                                                              │
+│  Agent: CEO Strategic Advisor                                                │
+│                                                                              │
+│  Final Answer:                                                               │
+│  Rezumatul la ce am găsit pe paginile alea (din căutarea anterioară):        │
+│                                                                              │
+│  Am obținut 5 rezultate complet irelevante pentru reel-ul cu berea de la     │
+│  Caru' cu Bere (nimic despre 1879, rețetă originală sau local):              │
+│                                                                              │
+│  1. Articol Capital.ro despre miracole medicale la Spitalul Sfântul Sava     │
+│  (https://www.capital.ro/de-la-targa-la-primul-pas-miracolele-medicale-de-l  │
+│  a-sfantul-sava-cel-sfintit.html).                                           │
+│  2. Video TikTok despre separare în fapt ca prim pas spre claritate          │
+│  (https://www.tiktok.com/@avandreeazone/video/7628161015917579542).          │
+│  3. Short YouTube despre detalii de pe masă                                  │
+│  (https://www.youtube.com/shorts/v-OotQo0bgg).                               │
+│  4. Articol Digi24 cu Dumitru Prunariu despre primul pas pe Lună             │
+│  (https://www.digi24.ro/stiri/sci-tech/a-pasit-omul-pe-luna-cel-mai-puterni  │
+│  c-argument-pe-care-il-are-dumitru-prunariu-pentru-a-demonta-teoriile-consp  │
+│  iratiei-1162993).                                                           │
+│  5. Info CSID despre testul Papanicolau ca prim pas spre vindecare           │
+│  (https://www.csid.ro/boli-afectiuni/testul-papanicolau-pap-cui-se-adreseaz  │
+│  a-si-ce-indica-rezultatele-16189955/).                                      │
+│                                                                              │
+│  Nimic util pentru comparația 1879 vs. azi. Vrei să reformulăm căutarea      │
+│  (ex. „Caru cu Bere istorie bere originală 1879”) sau trecem la varianta     │
+│  2/3 din sugestii? Spune-mi cum continuăm.                                   │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+🚀 Crew: crew
+└── 📋 Task: dfd0805d-b3f2-4669-a9df-aea0badae7fc
+    Assigned to: CEO Strategic Advisor
+    Status: ✅ Completed
+┌────────────────────────────── Task Completion ───────────────────────────────┐
+│                                                                              │
+│  Task Completed                                                              │
+│  Name: dfd0805d-b3f2-4669-a9df-aea0badae7fc                                  │
+│  Agent: CEO Strategic Advisor                                                │
+│  Tool Args:                                                                  │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────── Crew Completion ───────────────────────────────┐
+│                                                                              │
+│  Crew Execution Completed                                                    │
+│  Name: crew                                                                  │
+│  ID: e34aa110-4302-426d-b37b-656e4e0bcb6a                                    │
+│  Tool Args:                                                                  │
+│  Final Output: Rezumatul la ce am găsit pe paginile alea (din căutarea       │
+│  anterioară):                                                                │
+│                                                                              │
+│  Am obținut 5 rezultate complet irelevante pentru reel-ul cu berea de la     │
+│  Caru' cu Bere (nimic despre 1879, rețetă originală sau local):              │
+│                                                                              │
+│  1. Articol Capital.ro despre miracole medicale la Spitalul Sfântul Sava     │
+│  (https://www.capital.ro/de-la-targa-la-primul-pas-miracolele-medicale-de-l  │
+│  a-sfantul-sava-cel-sfintit.html).                                           │
+│  2. Video TikTok despre separare în fapt ca prim pas spre claritate          │
+│  (https://www.tiktok.com/@avandreeazone/video/7628161015917579542).          │
+│  3. Short YouTube despre detalii de pe masă                                  │
+│  (https://www.youtube.com/shorts/v-OotQo0bgg).                               │
+│  4. Articol Digi24 cu Dumitru Prunariu despre primul pas pe Lună             │
+│  (https://www.digi24.ro/stiri/sci-tech/a-pasit-omul-pe-luna-cel-mai-puterni  │
+│  c-argument-pe-care-il-are-dumitru-prunariu-pentru-a-demonta-teoriile-consp  │
+│  iratiei-1162993).                                                           │
+│  5. Info CSID despre testul Papanicolau ca prim pas spre vindecare           │
+│  (https://www.csid.ro/boli-afectiuni/testul-papanicolau-pap-cui-se-adreseaz  │
+│  a-si-ce-indica-rezultatele-16189955/).                                      │
+│                                                                              │
+│  Nimic util pentru comparația 1879 vs. azi. Vrei să reformulăm căutarea      │
+│  (ex. „Caru cu Bere istorie bere originală 1879”) sau trecem la varianta     │
+│  2/3 din sugestii? Spune-mi cum continuăm.                                   │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+2026-06-18T19:50:20.681728Z [error    ] memory_store_failed            error='[Errno 11001] getaddrinfo failed'
+2026-06-18T19:50:20.681728Z [info     ] crew_completed                 mode=chat
+: utils.py:1260 - Wrapper: Completed Call, calling success_handler

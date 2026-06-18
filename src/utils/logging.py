@@ -33,6 +33,11 @@ def setup_logging() -> None:
         level=log_level,
     )
 
+    # google-auth 2.55+ probes an optional Regional Access Boundary endpoint for
+    # service accounts; personal projects don't have one, so it logs a harmless warning.
+    logging.getLogger("google.oauth2._client").setLevel(logging.ERROR)
+    logging.getLogger("google.auth._regional_access_boundary_utils").setLevel(logging.ERROR)
+
 
 def get_logger(name: str) -> structlog.BoundLogger:
     return structlog.get_logger(name)

@@ -125,12 +125,12 @@ python src/scheduler.py
 4. Share Calendar cu email-ul service account
 5. `.env`: `GOOGLE_CREDENTIALS_JSON={"type":"service_account",...}` (întreg JSON pe o linie)
 
-### Notificări: Telegram sau WhatsApp
+### Notificări: Telegram, WhatsApp sau Discord
 
 Alege canalul în `.env`:
 
 ```env
-NOTIFIER_PROVIDER=telegram   # sau whatsapp
+NOTIFIER_PROVIDER=telegram   # sau whatsapp | discord
 ```
 
 #### Opțiunea A — Telegram (simplu, gratuit)
@@ -182,12 +182,30 @@ Folosește **WhatsApp Business Cloud API** (Meta) — oficial, production-ready.
    "
    ```
 
-| | Telegram | WhatsApp |
-|---|----------|----------|
-| Setup | 5 min | 20–30 min |
-| Cost | Gratuit | ~1000 conv/lună gratuit, apoi per conversație |
-| Mesaje automate | Oricând | Template sau fereastră 24h |
-| Familiaritate RO | Mediu | Foarte mare |
+#### Opțiunea C — Discord (recomandat dacă vrei setup rapid + istoric)
+
+Folosește **Discord Incoming Webhook** — gratuit, fără bot OAuth.
+
+1. Discord → creează server privat (sau folosește unul existent)
+2. **Server Settings** → **Integrations** → **Webhooks** → **New Webhook**
+3. Alege canalul (ex: `#andreia-agents`) → **Copy Webhook URL**
+4. `.env`:
+   ```env
+   NOTIFIER_PROVIDER=discord
+   DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
+   DISCORD_WEBHOOK_USERNAME=Andrei AI
+   ```
+5. **Test:**
+   ```powershell
+   .\scripts\local_run.ps1 discord
+   ```
+
+| | Telegram | Discord | WhatsApp |
+|---|----------|---------|----------|
+| Setup | 5 min | **3 min** | 20–30 min |
+| Cost | Gratuit | **Gratuit** | ~1000 conv/lună gratuit |
+| Mesaje automate | Oricând | **Oricând** | Template sau fereastră 24h |
+| Istoric mesaje | Limitat | **Da (canal)** | Da |
 
 ### Fallback LLMs (opțional dar recomandat)
 
@@ -435,9 +453,11 @@ grep -r "xai-\|sk-ant-\|sk-\|secret_" --include="*.py" --include="*.env" .
 ### Notion "object not found"
 → Database-ul nu e shared cu integrarea. Mergi la database → ... → Connections → Add integration.
 
-### Notificările nu sosesc (Telegram/WhatsApp)
+### Notificările nu sosesc (Telegram/Discord/WhatsApp)
 
 **Telegram:** Verifică `TELEGRAM_BOT_TOKEN` și `TELEGRAM_CHAT_ID`. Trimite `/start` botului înainte.
+
+**Discord:** Verifică `DISCORD_WEBHOOK_URL` — trebuie să înceapă cu `https://discord.com/api/webhooks/`. Dacă ai regenerat webhook-ul, actualizează URL-ul.
 
 **WhatsApp:**
 → Verifică `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_RECIPIENT`

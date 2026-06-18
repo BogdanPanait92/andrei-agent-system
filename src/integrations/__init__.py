@@ -1,15 +1,19 @@
 from src.integrations.notion import NotionClient
 from src.integrations.google_services import GoogleServices
+from src.integrations.google_sheets import GoogleSheetsService
 from src.integrations.telegram_bot import TelegramNotifier
 from src.integrations.whatsapp import WhatsAppNotifier
+from src.integrations.discord import DiscordNotifier
 from src.integrations.notifier import get_notifier
 from src.integrations.memory import MemoryStore
 
 __all__ = [
     "NotionClient",
     "GoogleServices",
+    "GoogleSheetsService",
     "TelegramNotifier",
     "WhatsAppNotifier",
+    "DiscordNotifier",
     "get_notifier",
     "MemoryStore",
 ]

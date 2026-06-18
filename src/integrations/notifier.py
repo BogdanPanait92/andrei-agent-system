@@ -1,7 +1,8 @@
-"""Unified notifier factory — Telegram or WhatsApp."""
+"""Unified notifier factory — Telegram, WhatsApp, or Discord."""
 
 from typing import Protocol
 
+from src.integrations.discord import DiscordNotifier
 from src.integrations.notifier_base import NotifierMixin
 from src.integrations.telegram_bot import TelegramNotifier
 from src.integrations.whatsapp import WhatsAppNotifier
@@ -26,7 +27,7 @@ _notifier_instance: Notifier | None = None
 
 
 def get_notifier() -> Notifier:
-    """Return configured notifier (telegram or whatsapp)."""
+    """Return configured notifier (telegram, whatsapp, or discord)."""
     global _notifier_instance
     if _notifier_instance is not None:
         return _notifier_instance
@@ -34,11 +35,12 @@ def get_notifier() -> Notifier:
     provider = settings.notifier_provider
     if provider == "whatsapp":
         _notifier_instance = WhatsAppNotifier()
-        logger.info("notifier_initialized", provider="whatsapp")
+    elif provider == "discord":
+        _notifier_instance = DiscordNotifier()
     else:
         _notifier_instance = TelegramNotifier()
-        logger.info("notifier_initialized", provider="telegram")
 
+    logger.info("notifier_initialized", provider=provider)
     return _notifier_instance
 
 
