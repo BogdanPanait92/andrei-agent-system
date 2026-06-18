@@ -3,7 +3,7 @@ pid: 25380
 cwd: "D:\agent mihaita"
 command: "cd \"D:\\agent mihaita\"; .\\venv\\Scripts\\python.exe run_discord_bot.py"
 started_at: 2026-06-18T18:23:20.420Z
-running_for_ms: 11435000 
+running_for_ms: 11730006 
 ---
 HTTP Request: GET https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json "HTTP/1.1 200 OK"
 2026-06-18T18:23:26.358642Z [info     ] discord_bot_starting          

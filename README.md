@@ -2,7 +2,7 @@
 
 Sistem agentic AI complet în cloud pentru **Andrei** — tată, soț, creator de conținut, inginer IT, fondator **Ajut Cum Pot**.
 
-5 agenți specializați lucrează împreună prin **CrewAI** + **LangGraph**, cu **Grok** ca LLM principal și integrări complete Notion, Google, **WhatsApp sau Telegram**, și memorie persistentă.
+5 agenți specializați lucrează împreună prin **CrewAI** + **LangGraph**, cu **Grok** ca LLM principal și integrări complete Notion, Google Calendar/Sheets, **Discord bot** (chat bidirecțional), notificări (Telegram/WhatsApp/Discord webhook) și memorie persistentă.
 
 ---
 
@@ -22,7 +22,8 @@ Sistem agentic AI complet în cloud pentru **Andrei** — tată, soț, creator d
 │  │ Agent  │ │ Creator │ │ Manager  │ │Balance │ │  Agent │ │
 │  └────────┘ └─────────┘ └──────────┘ └────────┘ └────────┘ │
 ├─────────────────────────────────────────────────────────────┤
-│  Notion │ Google Calendar/Docs │ WhatsApp/Telegram │ Supabase  │
+│  Notion │ Google Calendar/Sheets │ Discord Bot │ Telegram/WhatsApp │
+│  Supabase Memory │ Web Search (explicit)                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -88,6 +89,20 @@ streamlit run src/dashboard/app.py
 
 # Scheduler (cron local)
 python src/scheduler.py
+
+# Discord bot (chat interactiv)
+python run_discord_bot.py
+# Windows:
+.\scripts\local_run.ps1 discord-bot
+```
+
+---
+
+## Variabile aplicație
+
+```env
+USER_NAME=Andrei          # Numele afișat în prompturile agenților
+TIMEZONE=Europe/Bucharest
 ```
 
 ---
@@ -113,17 +128,33 @@ python src/scheduler.py
 | Database | Proprietăți |
 |----------|-------------|
 | Tasks | Name (title), Status (select), Priority (select), Due Date (date), Client (text) |
-| Ideas | Name (title), Category (select), Notes (text) |
+| Ideas | Name (title), Category (select), Notes (text), status (status: Draft, In evaluare, In lucru, Arhivat) |
 | Posting Plan | Name (title), Date (date), Platform (select), Status (select) |
 | Journal | Name (title), Content (text), Mood (select), Date (date) |
 
 ### Google APIs
 
 1. [Google Cloud Console](https://console.cloud.google.com) → New Project
-2. Enable APIs: Calendar, Docs, Drive
+2. Enable APIs: Calendar, Docs, Drive, **Sheets**
 3. Create Service Account → Download JSON
-4. Share Calendar cu email-ul service account
+4. Share Calendar și fiecare Google Sheet cu email-ul service account (Editor)
 5. `.env`: `GOOGLE_CREDENTIALS_JSON={"type":"service_account",...}` (întreg JSON pe o linie)
+
+**Google Sheets (pipeline operațional):**
+
+```env
+GOOGLE_SHEET_AJUT_CUM_POT_ID=...
+GOOGLE_SHEET_AJUT_TAB=Ajut Cum Pot
+GOOGLE_SHEET_EDITOR_PIPELINE_ID=...
+GOOGLE_SHEET_EDITOR_TAB=Content Creation
+```
+
+Service account-ul **nu poate crea** sheet-uri noi (cotă Drive) — creează-le manual și share-uiește-le.
+
+**Test:**
+```powershell
+.\scripts\local_run.ps1 google-sheets
+```
 
 ### Notificări: Telegram, WhatsApp sau Discord
 
@@ -182,9 +213,9 @@ Folosește **WhatsApp Business Cloud API** (Meta) — oficial, production-ready.
    "
    ```
 
-#### Opțiunea C — Discord (recomandat dacă vrei setup rapid + istoric)
+#### Opțiunea C — Discord Webhook (notificări one-way)
 
-Folosește **Discord Incoming Webhook** — gratuit, fără bot OAuth.
+Folosește **Discord Incoming Webhook** — gratuit, pentru briefing-uri și alerte automate.
 
 1. Discord → creează server privat (sau folosește unul existent)
 2. **Server Settings** → **Integrations** → **Webhooks** → **New Webhook**
@@ -200,12 +231,53 @@ Folosește **Discord Incoming Webhook** — gratuit, fără bot OAuth.
    .\scripts\local_run.ps1 discord
    ```
 
-| | Telegram | Discord | WhatsApp |
-|---|----------|---------|----------|
-| Setup | 5 min | **3 min** | 20–30 min |
-| Cost | Gratuit | **Gratuit** | ~1000 conv/lună gratuit |
-| Mesaje automate | Oricând | **Oricând** | Template sau fereastră 24h |
-| Istoric mesaje | Limitat | **Da (canal)** | Da |
+#### Opțiunea D — Discord Bot (chat bidirecțional)
+
+Bot separat de webhook — răspunde la mesaje, citește/scrie Notion și Sheets.
+
+1. [Discord Developer Portal](https://discord.com/developers/applications) → **New Application** → **Bot** → Token
+2. **Privileged Gateway Intents** → **MESSAGE CONTENT INTENT** = ON
+3. Invite bot pe server (Send Messages, Read Message History)
+4. `.env`:
+   ```env
+   ENABLE_DISCORD_BOT=true
+   DISCORD_BOT_TOKEN=...
+   DISCORD_ALLOWED_CHANNEL_IDS=123456789012345678
+   # DISCORD_ALLOWED_USER_IDS=...   # opțional
+   ```
+5. **Pornește:**
+   ```powershell
+   .\scripts\local_run.ps1 discord-bot
+   ```
+
+| | Telegram | Discord Webhook | Discord Bot | WhatsApp |
+|---|----------|-----------------|-------------|----------|
+| Setup | 5 min | 3 min | 15 min | 20–30 min |
+| Cost | Gratuit | Gratuit | Gratuit | ~1000 conv/lună gratuit |
+| Mesaje automate | Oricând | Oricând | La cerere | Template sau 24h |
+| Chat interactiv | Da | Nu | **Da** | Limitat |
+| Notion / Sheets | Nu | Nu | **Da** | Nu |
+
+### Căutare web (doar la cerere explicită)
+
+Nu se activează automat. Declanșează cu prefixe explicite în Discord:
+
+```
+caută: trenduri reels restaurante 2026
+caută pe net caru cu bere cluj
+search: content ideas beer garden
+```
+
+Flux: linkuri găsite → citește paginile → sugestii bazate pe conținut.
+
+```env
+ENABLE_WEB_SEARCH=true
+WEB_SEARCH_MAX_RESULTS=5
+WEB_SEARCH_FETCH_PAGES=true
+WEB_SEARCH_MAX_PAGES_TO_READ=3
+WEB_SEARCH_PAGE_CHAR_LIMIT=3500
+WEB_SEARCH_FETCH_TIMEOUT_SECONDS=15
+```
 
 ### Fallback LLMs (opțional dar recomandat)
 
@@ -317,7 +389,13 @@ ENABLE_SCHEDULER=true
 ANTHROPIC_API_KEY=...
 OPENAI_API_KEY=...
 GOOGLE_CREDENTIALS_JSON={...}
+GOOGLE_SHEET_AJUT_CUM_POT_ID=...
+GOOGLE_SHEET_EDITOR_PIPELINE_ID=...
 NOTION_IDEAS_DB_ID=...
+ENABLE_DISCORD_BOT=true
+DISCORD_BOT_TOKEN=...
+DISCORD_ALLOWED_CHANNEL_IDS=...
+ENABLE_WEB_SEARCH=true
 NOTION_POSTING_PLAN_DB_ID=...
 NOTION_AJUT_CUM_POT_DB_ID=...
 NOTION_JOURNAL_DB_ID=...
@@ -384,6 +462,26 @@ curl -X POST https://your-app.railway.app/trigger/alerts
 Creează un al doilea serviciu Railway:
 - Start Command: `streamlit run src/dashboard/app.py --server.port=$PORT --server.address=0.0.0.0`
 - Adaugă aceleași environment variables
+
+---
+
+## Discord Bot — Comenzi
+
+Scrie în canalul configurat (`DISCORD_ALLOWED_CHANNEL_IDS`) sau menționează botul.
+
+| Comandă / mesaj | Ce face |
+|-----------------|---------|
+| `help` / `ajutor` | Lista comenzilor |
+| `daily` | Briefing zilnic (Notion + Calendar + Content Creation din Sheets) |
+| `content` | Doar briefing Content Creation (lipsuri + gata de postat) |
+| `weekly` | Review săptămânal |
+| `idee: ...` | Plan de implementare + salvare automată în Notion Ideas (Draft) |
+| `care sunt ideile in draft` | Listă idei Notion filtrate după status (citire directă, fără AI) |
+| `da, salvează asta în Notion` | Salvează ultima conversație ca idee Draft |
+| `caută pe net ...` / `caută: ...` | Căutare web + linkuri + sugestii din pagini citite |
+| Chat liber | Task-uri Notion, Sheets, calendar, întrebări generale |
+
+**Notă:** Botul ține memorie scurtă per canal (ultimele mesaje) pentru follow-up-uri (`salvează asta`). Ideile noi în Notion primesc automat **status = Draft**.
 
 ---
 
@@ -457,7 +555,13 @@ grep -r "xai-\|sk-ant-\|sk-\|secret_" --include="*.py" --include="*.env" .
 
 **Telegram:** Verifică `TELEGRAM_BOT_TOKEN` și `TELEGRAM_CHAT_ID`. Trimite `/start` botului înainte.
 
-**Discord:** Verifică `DISCORD_WEBHOOK_URL` — trebuie să înceapă cu `https://discord.com/api/webhooks/`. Dacă ai regenerat webhook-ul, actualizează URL-ul.
+**Discord Webhook:** Verifică `DISCORD_WEBHOOK_URL` — trebuie să înceapă cu `https://discord.com/api/webhooks/`.
+
+**Discord Bot:** Verifică `DISCORD_BOT_TOKEN`, `MESSAGE CONTENT INTENT` activ, canalul în `DISCORD_ALLOWED_CHANNEL_IDS`. Pornește cu `.\scripts\local_run.ps1 discord-bot`.
+
+**Idei Notion inventate de AI:** Întrebările despre liste de idei (`care sunt ideile in draft`) folosesc citire directă din Notion. Pentru alte întrebări, agentul trebuie să apeleze tool-urile — nu inventa date.
+
+**Căutare web:** Funcționează doar cu prefix explicit (`caută:`, `caută pe net`). Unele site-uri blochează citirea paginii (403) — botul folosește snippet-urile din căutare.
 
 **WhatsApp:**
 → Verifică `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_RECIPIENT`
@@ -488,9 +592,10 @@ grep -r "xai-\|sk-ant-\|sk-\|secret_" --include="*.py" --include="*.env" .
 andreia-agent-system/
 ├── src/
 │   ├── agents/          # Definiții cei 5 agenți
+│   ├── bot/             # Discord bot, context conversație, intent detection
 │   ├── crew/            # CrewAI orchestration
 │   ├── graph/           # LangGraph workflow
-│   ├── integrations/    # Notion, Google, WhatsApp, Telegram, Memory
+│   ├── integrations/    # Notion, Google, Discord, Sheets, web search, memory
 │   ├── jobs/            # Daily, weekly, alerts
 │   ├── tools/           # CrewAI tools
 │   ├── llm/             # Grok + fallback providers
@@ -499,10 +604,13 @@ andreia-agent-system/
 │   └── utils/           # Config, logging
 ├── scripts/
 │   ├── supabase_schema.sql
+│   ├── setup_google_sheets.py
+│   ├── local_run.ps1
 │   ├── deploy_hostinger.sh
 │   └── setup_cron_hostinger.sh
 ├── DEPLOY_HOSTINGER.md
 ├── run_crew.py          # CLI principal
+├── run_discord_bot.py   # Discord bot interactiv
 ├── run_daily.py
 ├── run_weekly.py
 ├── run_alerts.py

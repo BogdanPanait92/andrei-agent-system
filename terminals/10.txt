@@ -3,7 +3,7 @@ pid: 24980
 cwd: "D:\agent mihaita"
 command: "Get-CimInstance Win32_Process -Filter \"Name='python.exe'\" | Where-Object { $_.CommandLine -like '*run_discord_bot*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }; Start-Sleep 1; cd \"D:\\agent mihaita\"; .\\venv\\Scripts\\python.exe run_discord_bot.py"
 started_at: 2026-06-18T19:15:11.052Z
-running_for_ms: 8325007  
+running_for_ms: 8620002  
 ---
 HTTP Request: GET https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json "HTTP/1.1 200 OK"
 2026-06-18T19:15:18.928949Z [info     ] discord_bot_starting          
