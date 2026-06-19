@@ -18,7 +18,7 @@ UPDATE_ONLY=false
 CRON_MODE=false
 NGINX_DOMAIN=""
 SKIP_DOCKER_INSTALL=false
-SERVICES="scheduler api"
+SERVICES="scheduler api discord-bot"
 
 # --- Colors ---
 RED='\033[0;31m'
@@ -63,7 +63,7 @@ while [[ $# -gt 0 ]]; do
         --repo)           REPO_URL="$2"; shift 2 ;;
         --dir)            INSTALL_DIR="$2"; shift 2 ;;
         --update)         UPDATE_ONLY=true; shift ;;
-        --cron-mode)      CRON_MODE=true; SERVICES="api"; shift ;;
+        --cron-mode)      CRON_MODE=true; SERVICES="api discord-bot"; shift ;;
         --nginx)          NGINX_DOMAIN="$2"; shift 2 ;;
         --with-dashboard) WITH_DASHBOARD=true; shift ;;
         --skip-docker)    SKIP_DOCKER_INSTALL=true; shift ;;
@@ -262,7 +262,8 @@ echo ""
 echo "  Comenzi utile:"
 echo "    cd $INSTALL_DIR"
 echo "    docker compose ps"
-echo "    docker compose logs -f scheduler"
+    echo "    docker compose logs -f scheduler"
+    echo "    docker compose logs -f discord-bot"
 echo "    docker compose --profile jobs run --rm daily"
 echo ""
 if grep -q "your_xai_api_key" "$INSTALL_DIR/.env" 2>/dev/null; then
