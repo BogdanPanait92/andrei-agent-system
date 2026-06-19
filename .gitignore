@@ -40,6 +40,8 @@ ENV/
 # IDE
 .idea/
 .vscode/
+terminals/
+agent-tools/
 *.swp
 *.swo
 *~
