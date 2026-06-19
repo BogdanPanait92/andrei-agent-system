@@ -62,6 +62,7 @@ class Settings(BaseSettings):
     discord_allowed_channel_ids: str = ""
     discord_allowed_user_ids: str = ""
     enable_discord_bot: bool = False
+    discord_bot_run_in_api: bool = False
 
     # Discord voice messages (transcription via OpenAI Whisper)
     enable_discord_voice: bool = True

@@ -66,6 +66,8 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def _start_discord_bot_background() -> None:
+    if not settings.discord_bot_run_in_api:
+        return
     if not settings.enable_discord_bot or not settings.discord_bot_token.strip():
         return
 

@@ -32,6 +32,8 @@ services:
     build: .
     container_name: andrei-agents-api
     env_file: .env
+    environment:
+      DISCORD_BOT_RUN_IN_API: "false"
     restart: unless-stopped
     command: python -m src.api.server
     ports:
