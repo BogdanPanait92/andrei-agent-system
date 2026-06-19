@@ -7,9 +7,12 @@ import src.bootstrap  # noqa: F401
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
 
 from src.jobs.alerts import run_smart_alerts
+from src.jobs.auto_voiceover import run_auto_voiceover
 from src.jobs.daily_briefing import run_daily_briefing
+from src.jobs.task_reminder import run_task_reminder
 from src.jobs.weekly_review import run_weekly_review
 from src.utils.config import settings
 from src.utils.logging import get_logger, setup_logging
@@ -52,6 +55,26 @@ def create_scheduler() -> BlockingScheduler:
         name="Smart Alerts",
         replace_existing=True,
     )
+
+    if settings.enable_auto_voiceover:
+        scheduler.add_job(
+            run_auto_voiceover,
+            IntervalTrigger(minutes=max(5, settings.auto_voiceover_interval_minutes)),
+            id="auto_voiceover",
+            name="Auto Voice-over for Notion Ideas",
+            replace_existing=True,
+        )
+
+    if settings.enable_task_reminder and not (
+        settings.enable_discord_bot and settings.task_reminder_discord
+    ):
+        scheduler.add_job(
+            run_task_reminder,
+            IntervalTrigger(hours=max(1, settings.task_reminder_interval_hours)),
+            id="task_reminder",
+            name="Task Check Reminder",
+            replace_existing=True,
+        )
 
     return scheduler
 

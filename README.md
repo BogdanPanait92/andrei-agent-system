@@ -119,18 +119,18 @@ TIMEZONE=Europe/Bucharest
 
 1. [notion.so/my-integrations](https://www.notion.so/my-integrations) → New integration
 2. Copiază Internal Integration Token → `NOTION_API_KEY`
-3. Creează databases: Tasks, Ideas, Posting Plan, Ajut Cum Pot, Journal
-4. Share fiecare database cu integrarea
+3. Creează databases: Family & Administrative, Ideas, Posting Plan (în pagina Content Creation), Ajut Cum Pot, Job
+4. Share fiecare database + paginile relevante cu integrarea
 5. Copiază Database IDs din URL: `notion.so/workspace/DATABASE_ID?v=...`
 
 **Proprietăți recomandate per database:**
 
 | Database | Proprietăți |
 |----------|-------------|
-| Tasks | Name (title), Status (select), Priority (select), Due Date (date), Client (text) |
+| Family & Administrative | Name (title), Status (select), Priority (select), Due Date (date), Client (text) |
 | Ideas | Name (title), Category (select), Notes (text), status (status: Draft, In evaluare, In lucru, Arhivat) |
 | Posting Plan | Name (title), Date (date), Platform (select), Status (select) |
-| Journal | Name (title), Content (text), Mood (select), Date (date) |
+| Job | Name (title), Content (text), Mood (select), Date (date) |
 
 ### Google APIs
 
@@ -244,6 +244,9 @@ Bot separat de webhook — răspunde la mesaje, citește/scrie Notion și Sheets
    DISCORD_BOT_TOKEN=...
    DISCORD_ALLOWED_CHANNEL_IDS=123456789012345678
    # DISCORD_ALLOWED_USER_IDS=...   # opțional
+   # Mesaje vocale (Whisper — necesită OPENAI_API_KEY)
+   ENABLE_DISCORD_VOICE=true
+   DISCORD_VOICE_LANGUAGE=ro
    ```
 5. **Pornește:**
    ```powershell
@@ -269,6 +272,20 @@ search: content ideas beer garden
 ```
 
 Flux: linkuri găsite → citește paginile → sugestii bazate pe conținut.
+
+### Mod research (Grok / ChatGPT-style)
+
+Conversație liberă cu cunoștințe generale + research web automat în fundal:
+
+```
+research: cum funcționează computerele cuantică
+grok: ce s-a întâmplat la summit-ul G7 2026
+explorează: tendințe parenting în Europa
+```
+
+După primul `research:` poți continua fără prefix în același canal. Ieșire: `research stop`.
+
+Diferență față de `caută:` — un singur răspuns conversațional (nu listă de linkuri separată).
 
 ```env
 ENABLE_WEB_SEARCH=true
@@ -366,7 +383,7 @@ git push -u origin main
 APP_ENV=production
 XAI_API_KEY=xai-...
 NOTION_API_KEY=secret_...
-NOTION_TASKS_DB_ID=...
+NOTION_FAMILY_DB_ID=...
 NOTIFIER_PROVIDER=telegram
 TELEGRAM_BOT_TOKEN=...
 TELEGRAM_CHAT_ID=...
@@ -396,9 +413,10 @@ ENABLE_DISCORD_BOT=true
 DISCORD_BOT_TOKEN=...
 DISCORD_ALLOWED_CHANNEL_IDS=...
 ENABLE_WEB_SEARCH=true
+NOTION_CONTENT_CREATION_ID=...
 NOTION_POSTING_PLAN_DB_ID=...
 NOTION_AJUT_CUM_POT_DB_ID=...
-NOTION_JOURNAL_DB_ID=...
+NOTION_JOB_DB_ID=...
 NOTION_BRIEFINGS_PAGE_ID=...
 ```
 
@@ -479,6 +497,8 @@ Scrie în canalul configurat (`DISCORD_ALLOWED_CHANNEL_IDS`) sau menționează b
 | `care sunt ideile in draft` | Listă idei Notion filtrate după status (citire directă, fără AI) |
 | `da, salvează asta în Notion` | Salvează ultima conversație ca idee Draft |
 | `caută pe net ...` / `caută: ...` | Căutare web + linkuri + sugestii din pagini citite |
+| `research:` / `grok:` / `explorează:` | Chat ca Grok/ChatGPT — cunoștințe + research web automat |
+| Mesaj vocal | Transcriere automată (Whisper) + același flux ca textul |
 | Chat liber | Task-uri Notion, Sheets, calendar, întrebări generale |
 
 **Notă:** Botul ține memorie scurtă per canal (ultimele mesaje) pentru follow-up-uri (`salvează asta`). Ideile noi în Notion primesc automat **status = Draft**.

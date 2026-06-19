@@ -36,6 +36,24 @@ class ConversationContext:
             return None
         return items[-1]
 
+    @staticmethod
+    def is_meta_exchange(exchange: Exchange) -> bool:
+        from src.bot.save_intent import is_save_to_notion_request
+
+        if is_save_to_notion_request(exchange.user):
+            return True
+        assistant = exchange.assistant.strip()
+        return assistant.startswith("✅ **Salvat") or assistant.startswith("✅ Salvat")
+
+    def get_last_substantive(self, channel_id: int) -> Exchange | None:
+        items = self._channels.get(channel_id)
+        if not items:
+            return None
+        for exchange in reversed(items):
+            if not self.is_meta_exchange(exchange):
+                return exchange
+        return None
+
     def format_for_prompt(self, channel_id: int, limit: int = 3) -> str:
         items = list(self._channels.get(channel_id, []))[-limit:]
         if not items:

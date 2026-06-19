@@ -13,7 +13,9 @@ logger = get_logger(__name__)
 def _check_deadline_alerts(notion: NotionClient, notifier: Notifier) -> int:
     sent = 0
     try:
-        tasks = notion.get_tasks(status="In Progress") + notion.get_tasks(status="To Do")
+        tasks = notion.get_family_items(status="To Do") + notion.get_family_items(
+            status="In progress"
+        )
         today = datetime.now().date()
         for task in tasks:
             due = NotionClient.extract_text_property(task, "Due Date")

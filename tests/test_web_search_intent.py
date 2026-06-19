@@ -17,3 +17,10 @@ def test_no_implicit_search() -> None:
 
 def test_search_prefix() -> None:
     assert parse_web_search_query("search: burnout parenting") == "burnout parenting"
+
+
+def test_flexible_cauta_pe_net() -> None:
+    assert (
+        parse_web_search_query("vreau sa cauti pe net despre caru cu bere cluj")
+        == "caru cu bere cluj"
+    )

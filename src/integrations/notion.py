@@ -1,4 +1,4 @@
-"""Notion API integration for tasks, ideas, posting plan, journal."""
+"""Notion API integration for family/admin, ideas, posting plan, job."""
 
 import re
 from datetime import datetime
@@ -7,6 +7,7 @@ from typing import Any
 from notion_client import Client
 from notion_client.errors import APIResponseError
 
+from src.integrations.posting_plan_template import POSTING_PLAN_STATEMENT_DEFAULT
 from src.utils.config import settings
 from src.utils.logging import get_logger
 
@@ -21,10 +22,14 @@ IDEA_CATEGORIES = (
     "content creation",
     "Creativ",
     "Test",
+    "Reflecții",
 )
 IDEA_STATUSES = ("Draft", "In evaluare", "In lucru", "Arhivat")
 IDEA_DEFAULT_STATUS = "Draft"
 IDEA_STATUS_PROPERTY = "status"
+POSTING_POSTED_STATUSES = frozenset({"posted", "gata", "postat", "done"})
+POSTING_PRIORITIES = ("p1", "p2", "p3")
+POSTING_TITLE_KEYS = ("Nume", "Name", "Title", "Task")
 
 
 class NotionClient:
@@ -32,6 +37,7 @@ class NotionClient:
         settings.validate_required("notion_api_key")
         self.client = Client(auth=settings.notion_api_key)
         self._data_source_cache: dict[str, str] = {}
+        self._posting_plan_title_key: str | None = None
 
     def _resolve_data_source_id(self, database_id: str) -> str:
         """Resolve database ID to data_source_id (Notion API 2025-09-03)."""
@@ -93,8 +99,8 @@ class NotionClient:
             logger.error("notion_append_failed", page_id=page_id, error=str(e))
             raise
 
-    def get_tasks(self, status: str | None = None, limit: int = 50) -> list[dict]:
-        if not settings.notion_tasks_db_id:
+    def get_family_items(self, status: str | None = None, limit: int = 50) -> list[dict]:
+        if not settings.notion_family_db_id:
             return []
         filter_obj = None
         if status:
@@ -102,7 +108,11 @@ class NotionClient:
                 "property": "Status",
                 "select": {"equals": status},
             }
-        return self.query_database(settings.notion_tasks_db_id, filter_obj)[:limit]
+        return self.query_database(settings.notion_family_db_id, filter_obj)[:limit]
+
+    def get_tasks(self, status: str | None = None, limit: int = 50) -> list[dict]:
+        """Backward-compatible alias for Family & Administrative database."""
+        return self.get_family_items(status=status, limit=limit)
 
     @staticmethod
     def normalize_idea_status(status: str) -> str | None:
@@ -127,31 +137,268 @@ class NotionClient:
         if resolved:
             filter_obj = {
                 "property": IDEA_STATUS_PROPERTY,
-                "status": {"equals": resolved},
+                "select": {"equals": resolved},
             }
         return self.query_database(settings.notion_ideas_db_id, filter_obj)[:limit]
+
+    def find_ideas_matching(self, query: str, status: str | None = None, limit: int = 50) -> list[dict]:
+        needle = query.strip().lower()
+        if not needle:
+            return []
+        ideas = self.get_ideas(status=status, limit=limit)
+        exact = [
+            idea for idea in ideas if self.extract_title(idea).strip().lower() == needle
+        ]
+        if exact:
+            return exact
+        return [
+            idea for idea in ideas if needle in self.extract_title(idea).strip().lower()
+        ]
+
+    def idea_has_voiceover(self, page_id: str) -> bool:
+        try:
+            text = self.get_page_blocks_text(page_id, max_chars=2500).lower()
+        except Exception:
+            return False
+        return "voice-over" in text or "voiceover" in text
+
+    def get_page_blocks_text(self, page_id: str, max_chars: int = 4000) -> str:
+        """Read block children as plain text for idea page context."""
+        lines: list[str] = []
+        cursor: str | None = None
+        while True:
+            kwargs: dict[str, Any] = {"block_id": page_id}
+            if cursor:
+                kwargs["start_cursor"] = cursor
+            response = self.client.blocks.children.list(**kwargs)
+            for block in response.get("results", []):
+                text = self._extract_block_plain_text(block)
+                if text:
+                    lines.append(text)
+                if sum(len(line) for line in lines) >= max_chars:
+                    break
+            if sum(len(line) for line in lines) >= max_chars:
+                break
+            if not response.get("has_more"):
+                break
+            cursor = response.get("next_cursor")
+        combined = "\n".join(lines).strip()
+        return combined[:max_chars]
+
+    @classmethod
+    def _extract_block_plain_text(cls, block: dict) -> str:
+        block_type = block.get("type")
+        if not block_type:
+            return ""
+        payload = block.get(block_type) or {}
+        rich_text = payload.get("rich_text") or []
+        return "".join(part.get("plain_text", "") for part in rich_text).strip()
 
     def get_posting_plan(self, limit: int = 30) -> list[dict]:
         if not settings.notion_posting_plan_db_id:
             return []
-        return self.query_database(
-            settings.notion_posting_plan_db_id,
-            sorts=[{"property": "Date", "direction": "ascending"}],
-        )[:limit]
+        db_id = settings.notion_posting_plan_db_id
+        try:
+            rows = self.query_database(
+                db_id,
+                sorts=[{"property": "Prioritate", "direction": "ascending"}],
+            )
+        except APIResponseError:
+            rows = self.query_database(db_id)
+        return rows[:limit]
+
+    def _posting_plan_title_property(self) -> str:
+        if self._posting_plan_title_key:
+            return self._posting_plan_title_key
+        db_id = settings.notion_posting_plan_db_id
+        if not db_id:
+            self._posting_plan_title_key = "Name"
+            return self._posting_plan_title_key
+        try:
+            db = self.client.databases.retrieve(database_id=db_id)
+            props = db.get("properties", {})
+            for key in POSTING_TITLE_KEYS:
+                if key in props and props[key].get("type") == "title":
+                    self._posting_plan_title_key = key
+                    return key
+        except APIResponseError:
+            pass
+        try:
+            rows = self.query_database(db_id)[:1]
+            if rows:
+                page_props = rows[0].get("properties", {})
+                for key in POSTING_TITLE_KEYS:
+                    if key in page_props and page_props[key].get("type") == "title":
+                        self._posting_plan_title_key = key
+                        return key
+                for key, prop in page_props.items():
+                    if prop.get("type") == "title":
+                        self._posting_plan_title_key = key
+                        return key
+        except APIResponseError:
+            pass
+        self._posting_plan_title_key = "Name"
+        return self._posting_plan_title_key
+
+    @classmethod
+    def normalize_posting_priority(cls, priority: str) -> str | None:
+        if not priority.strip():
+            return None
+        key = priority.strip().lower()
+        return key if key in POSTING_PRIORITIES else None
 
     def get_ajut_cum_pot_items(self, limit: int = 20) -> list[dict]:
         if not settings.notion_ajut_cum_pot_db_id:
             return []
         return self.query_database(settings.notion_ajut_cum_pot_db_id)[:limit]
 
-    def find_task_by_title(self, title: str) -> dict | None:
+    @classmethod
+    def posting_plan_record(cls, page: dict) -> dict[str, str]:
+        return {
+            "Titlu": cls.extract_title(page),
+            "Oras": cls.extract_text_property(page, "Oras"),
+            "Prioritate": cls.extract_text_property(page, "Prioritate"),
+            "Status": cls.extract_text_property(page, "Status"),
+        }
+
+    @classmethod
+    def is_posting_done(cls, status: str) -> bool:
+        return status.strip().lower() in POSTING_POSTED_STATUSES
+
+    def find_posting_plan_by_title(self, title: str) -> dict | None:
         title_lower = title.strip().lower()
-        for task in self.get_tasks():
-            if self.extract_title(task).strip().lower() == title_lower:
-                return task
+        for item in self.get_posting_plan(limit=100):
+            if self.extract_title(item).strip().lower() == title_lower:
+                return item
         return None
 
-    def update_task(
+    @classmethod
+    def _posting_plan_template_blocks(cls, scheduled_date: str | None = None) -> list[dict]:
+        blocks: list[dict] = []
+        blocks.extend(
+            cls._paragraph_blocks(f"Statement: {POSTING_PLAN_STATEMENT_DEFAULT}")
+        )
+        blocks.append({"object": "block", "type": "divider", "divider": {}})
+        for label in ("Material:", "Text Hook:", "Voice Over:", "Sunet de fundal:"):
+            blocks.extend(cls._paragraph_blocks(label))
+        blocks.append(
+            {
+                "object": "block",
+                "type": "to_do",
+                "to_do": {
+                    "rich_text": [{"type": "text", "text": {"content": "Trial reels"}}],
+                    "checked": False,
+                },
+            }
+        )
+        for label in ("mențiuni:", "locație:", "prețuri:"):
+            blocks.extend(cls._paragraph_blocks(label))
+        if scheduled_date:
+            blocks.extend(cls._paragraph_blocks(f"Dată planificată: {scheduled_date}"))
+        return blocks
+
+    def create_posting_plan_item(
+        self,
+        title: str,
+        oras: str = "",
+        prioritate: str = "",
+        status: str = "Planned",
+        scheduled_date: str | None = None,
+    ) -> dict:
+        title_key = self._posting_plan_title_property()
+        props: dict[str, Any] = {
+            title_key: {"title": [{"text": {"content": self._truncate_rich_text(title)}}]},
+        }
+        if oras:
+            props["Oras"] = {
+                "rich_text": [{"text": {"content": self._truncate_rich_text(oras)}}]
+            }
+        resolved_priority = self.normalize_posting_priority(prioritate)
+        if resolved_priority:
+            props["Prioritate"] = {"select": {"name": resolved_priority}}
+        if status:
+            props["Status"] = {"select": {"name": status}}
+        children = self._posting_plan_template_blocks(scheduled_date=scheduled_date)
+        return self.create_page(
+            settings.notion_posting_plan_db_id,
+            props,
+            children=children,
+        )
+
+    def update_posting_plan_item(
+        self,
+        page_id: str,
+        oras: str | None = None,
+        prioritate: str | None = None,
+        status: str | None = None,
+    ) -> dict:
+        props: dict[str, Any] = {}
+        if oras is not None:
+            props["Oras"] = {
+                "rich_text": [{"text": {"content": self._truncate_rich_text(oras)}}]
+            }
+        if prioritate is not None:
+            resolved = self.normalize_posting_priority(prioritate)
+            if resolved:
+                props["Prioritate"] = {"select": {"name": resolved}}
+        if status:
+            props["Status"] = {"select": {"name": status}}
+        if not props:
+            raise ValueError("No posting plan fields provided to update")
+        return self.update_page(page_id, props)
+
+    def append_posting_plan_scheduled_date(self, page_id: str, scheduled_date: str) -> dict:
+        return self.append_to_page(
+            page_id,
+            self._paragraph_blocks(f"Dată planificată: {scheduled_date}"),
+        )
+
+    def find_ajut_cum_pot_by_title(self, title: str) -> dict | None:
+        title_lower = title.strip().lower()
+        for item in self.get_ajut_cum_pot_items(limit=100):
+            if self.extract_title(item).strip().lower() == title_lower:
+                return item
+        return None
+
+    def create_ajut_cum_pot_item(
+        self,
+        title: str,
+        status: str = "",
+        content: str = "",
+    ) -> dict | None:
+        if not settings.notion_ajut_cum_pot_db_id:
+            logger.warning("notion_ajut_cum_pot_db_not_configured")
+            return None
+        props: dict[str, Any] = {
+            "Name": {"title": [{"text": {"content": self._truncate_rich_text(title)}}]},
+        }
+        if status:
+            props["Status"] = {"select": {"name": status}}
+        children = self._paragraph_blocks(content) if content.strip() else None
+        page = self.create_page(
+            settings.notion_ajut_cum_pot_db_id,
+            props,
+            children=children,
+        )
+        logger.info("ajut_cum_pot_item_saved", title=title, page_id=page.get("id"))
+        return page
+
+    def update_ajut_cum_pot_item(self, page_id: str, status: str | None = None) -> dict:
+        if not status:
+            raise ValueError("No Ajut Cum Pot fields provided to update")
+        return self.update_page(page_id, {"Status": {"select": {"name": status}}})
+
+    def find_family_item_by_title(self, title: str) -> dict | None:
+        title_lower = title.strip().lower()
+        for item in self.get_family_items():
+            if self.extract_title(item).strip().lower() == title_lower:
+                return item
+        return None
+
+    def find_task_by_title(self, title: str) -> dict | None:
+        return self.find_family_item_by_title(title)
+
+    def update_family_item(
         self,
         page_id: str,
         status: str | None = None,
@@ -169,10 +416,20 @@ class NotionClient:
         if client:
             props["Client"] = {"rich_text": [{"text": {"content": client}}]}
         if not props:
-            raise ValueError("No task fields provided to update")
+            raise ValueError("No family/admin fields provided to update")
         return self.update_page(page_id, props)
 
-    def create_task(
+    def update_task(
+        self,
+        page_id: str,
+        status: str | None = None,
+        priority: str | None = None,
+        due_date: str | None = None,
+        client: str | None = None,
+    ) -> dict:
+        return self.update_family_item(page_id, status, priority, due_date, client)
+
+    def create_family_item(
         self,
         title: str,
         status: str = "To Do",
@@ -189,7 +446,17 @@ class NotionClient:
             props["Due Date"] = {"date": {"start": due_date}}
         if client:
             props["Client"] = {"rich_text": [{"text": {"content": client}}]}
-        return self.create_page(settings.notion_tasks_db_id, props)
+        return self.create_page(settings.notion_family_db_id, props)
+
+    def create_task(
+        self,
+        title: str,
+        status: str = "To Do",
+        priority: str = "Medium",
+        due_date: str | None = None,
+        client: str | None = None,
+    ) -> dict:
+        return self.create_family_item(title, status, priority, due_date, client)
 
     def create_idea(
         self,
@@ -199,13 +466,13 @@ class NotionClient:
         status: str = IDEA_DEFAULT_STATUS,
         children: list | None = None,
     ) -> dict:
-        if category not in IDEA_CATEGORIES:
-            category = "General"
         resolved_status = self.normalize_idea_status(status) or IDEA_DEFAULT_STATUS
         props: dict[str, Any] = {
             "Name": {"title": [{"text": {"content": self._truncate_rich_text(title)}}]},
-            "Category": {"select": {"name": category}},
-            IDEA_STATUS_PROPERTY: {"status": {"name": resolved_status}},
+            "Category": {
+                "rich_text": [{"text": {"content": self._truncate_rich_text(category)}}]
+            },
+            IDEA_STATUS_PROPERTY: {"select": {"name": resolved_status}},
         }
         if notes:
             props["Notes"] = {
@@ -249,10 +516,42 @@ class NotionClient:
             },
         }
 
-    _SECTION_RE = re.compile(
-        r"^\s*(?:\d+[\.\)]\s*)?(?:\*\*)?([^*\n]+?)(?:\*\*)?\s*(?:—|-|:)\s*",
-        re.MULTILINE,
+    _IDEA_SECTION_HEADERS = (
+        "rezumat",
+        "de ce merită",
+        "de ce merita",
+        "varianta a",
+        "varianta b",
+        "varianta a — voice-over",
+        "varianta b — voice-over",
+        "hook",
+        "script",
+        "cta",
+        "note producție",
+        "note productie",
+        "research — esență",
+        "research - esenta",
+        "pași de implementare",
+        "pasi de implementare",
+        "quick win",
+        "resurse",
+        "atenție",
+        "atentie",
+        "următorul pas",
+        "urmatorul pas",
     )
+
+    _SECTION_LINE_RE = re.compile(
+        r"^\s*(?:\d+[\.\)]\s*)?(?:\*\*)?(.+?)(?:\*\*)?\s*(?:—|:)\s*(.*)$"
+    )
+
+    @classmethod
+    def _is_main_plan_section(cls, title: str) -> bool:
+        normalized = title.strip().lower()
+        return any(
+            normalized == header or normalized.startswith(f"{header} ")
+            for header in cls._IDEA_SECTION_HEADERS
+        )
 
     @classmethod
     def _plan_to_blocks(cls, plan_text: str) -> list[dict]:
@@ -281,12 +580,11 @@ class NotionClient:
                     section_lines.append("")
                 continue
 
-            match = cls._SECTION_RE.match(stripped)
-            is_numbered_section = bool(re.match(r"^\d+[\.\)]", stripped))
-            if match and is_numbered_section:
+            match = cls._SECTION_LINE_RE.match(stripped)
+            if match and cls._is_main_plan_section(match.group(1)):
                 flush_section()
                 section_title = match.group(1).strip()
-                remainder = stripped[match.end() :].strip()
+                remainder = match.group(2).strip()
                 if remainder:
                     section_lines.append(remainder)
                 continue
@@ -303,7 +601,19 @@ class NotionClient:
             return "ACP"
         if "linkedin" in combined:
             return "LinkedIn"
-        if any(k in combined for k in ("video", "youtube", "vlog", "podcast", "reel", "tiktok")):
+        if any(
+            k in combined
+            for k in (
+                "reflec",
+                "viata scurta",
+                "viața scurtă",
+                "sensul vietii",
+                "sensul vieții",
+                "morala",
+            )
+        ):
+            return "Reflecții"
+        if any(k in combined for k in ("video", "youtube", "vlog", "podcast", "reel", "tiktok", "clip")):
             return "Video"
         if any(
             k in combined
@@ -314,7 +624,30 @@ class NotionClient:
 
     @staticmethod
     def extract_idea_title(idea_text: str, max_len: int = 80) -> str:
+        from src.bot.idea_intent import parse_idea_request
+
+        parsed = parse_idea_request(idea_text)
+        if parsed and parsed.lower() != idea_text.strip().lower():
+            idea_text = parsed
+
         text = " ".join(idea_text.strip().split())
+        lowered = text.lower()
+        command_prefixes = (
+            "pune in idei ideea asta:",
+            "pune în idei ideea asta:",
+            "adauga la idei:",
+            "adaugă la idei:",
+            "adauga in idei:",
+            "adaugă în idei:",
+            "pune in idei:",
+            "pune în idei:",
+            "idee:",
+            "idea:",
+        )
+        for prefix in command_prefixes:
+            if lowered.startswith(prefix):
+                text = text[len(prefix) :].strip()
+                break
         if not text:
             return "Idee nouă"
         if len(text) <= max_len:
@@ -339,18 +672,24 @@ class NotionClient:
             return stripped[:max_len]
         return plan_text.strip()[:max_len]
 
-    def save_idea_suggestion(self, idea_text: str, plan_text: str, source: str = "Discord") -> dict | None:
+    def save_idea_suggestion(
+        self,
+        idea_text: str,
+        plan_text: str,
+        source: str = "Discord",
+        title: str | None = None,
+    ) -> dict | None:
         if not settings.notion_ideas_db_id:
             logger.warning("notion_ideas_db_not_configured")
             return None
 
-        title = self.extract_idea_title(idea_text)
+        title = self.extract_idea_title(title or idea_text)
         category = self.infer_idea_category(idea_text, plan_text)
         summary = self.extract_plan_summary(plan_text) or self._truncate_rich_text(idea_text, 500)
         now = datetime.now().strftime("%Y-%m-%d %H:%M")
 
         children: list[dict] = [
-            self._heading_block(f"Plan de implementare ({source}, {now})"),
+            self._heading_block(f"Voice-over & conținut ({source}, {now})"),
             *self._plan_to_blocks(plan_text),
             self._heading_block("Ideea originală", level=3),
             *self._paragraph_blocks(idea_text),
@@ -365,6 +704,19 @@ class NotionClient:
             blocks=len(children),
         )
         return page
+
+    def append_voiceover_to_idea(
+        self,
+        page_id: str,
+        voiceover_text: str,
+        source: str = "Discord-voiceover",
+    ) -> dict:
+        now = datetime.now().strftime("%Y-%m-%d %H:%M")
+        children: list[dict] = [
+            self._heading_block(f"Voice-over ({source}, {now})"),
+            *self._plan_to_blocks(voiceover_text),
+        ]
+        return self.append_to_page(page_id, children)
 
     def save_briefing(self, title: str, content: str, briefing_type: str = "daily") -> dict | None:
         if not settings.notion_briefings_page_id:
@@ -389,19 +741,29 @@ class NotionClient:
         ]
         return self.append_to_page(settings.notion_briefings_page_id, children)
 
-    def save_journal_entry(self, title: str, content: str, mood: str = "Reflectiv") -> dict:
+    def save_job_entry(self, title: str, content: str, mood: str = "Reflectiv") -> dict | None:
+        if not settings.notion_job_db_id:
+            logger.warning("notion_job_db_not_configured")
+            return None
         props: dict[str, Any] = {
-            "Name": {"title": [{"text": {"content": title}}]},
+            "Name": {"title": [{"text": {"content": self._truncate_rich_text(title)}}]},
             "Mood": {"select": {"name": mood}},
-            "Content": {"rich_text": [{"text": {"content": content[:2000]}}]},
+            "Content": {
+                "rich_text": [{"text": {"content": self._truncate_rich_text(content)}}]
+            },
             "Date": {"date": {"start": datetime.now().strftime("%Y-%m-%d")}},
         }
-        return self.create_page(settings.notion_journal_db_id, props)
+        page = self.create_page(settings.notion_job_db_id, props)
+        logger.info("job_entry_saved", title=title, page_id=page.get("id"))
+        return page
+
+    def save_journal_entry(self, title: str, content: str, mood: str = "Reflectiv") -> dict:
+        return self.save_job_entry(title, content, mood)
 
     @staticmethod
     def extract_title(page: dict) -> str:
         props = page.get("properties", {})
-        for key in ("Name", "Title", "Task"):
+        for key in POSTING_TITLE_KEYS:
             if key in props and props[key].get("title"):
                 return props[key]["title"][0]["plain_text"]
         return "Untitled"

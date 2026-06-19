@@ -125,3 +125,37 @@ class WebSearchService:
             "Nu repeta lista de linkuri — doar analiză și recomandări pentru Andrei."
         )
         return "\n".join(lines).strip()
+
+    @staticmethod
+    def format_for_research_prompt(results: list[dict[str, str]]) -> str:
+        if not results:
+            return (
+                "--- Research web ---\n"
+                "Căutarea nu a returnat rezultate. Răspunde din cunoștințele tale generale "
+                "și menționează că nu ai găsit surse web relevante pentru întrebare."
+            )
+
+        lines = [f"--- Research web ({len(results)} surse) ---"]
+        for idx, item in enumerate(results, start=1):
+            lines.append(f"{idx}. {item.get('title') or 'Fără titlu'}")
+            if item.get("snippet"):
+                lines.append(f"   Snippet: {item['snippet'][:500]}")
+            if item.get("url"):
+                lines.append(f"   URL: {item['url']}")
+            page_content = item.get("page_content", "")
+            page_read = item.get("page_read", "")
+            if page_content:
+                lines.append(f"   Conținut citit ({len(page_content)} chars):")
+                lines.append(f"   {page_content}")
+            elif page_read and page_read != "skipped":
+                lines.append(f"   Conținut pagină: indisponibil ({page_read})")
+            lines.append("")
+
+        lines.append(
+            "Instrucțiune: Combină aceste surse cu cunoștințele tale într-un răspuns "
+            "conversațional ca Grok/ChatGPT — organizat natural pe subiect, NU ca plan "
+            "de content (fără Rezumat/De ce merită/Pași de implementare). Integrează "
+            "informația în text. La final: „Surse” cu 2-5 linkuri. Dacă web contrazice "
+            "cunoștințele tale, prioritizează sursele recente."
+        )
+        return "\n".join(lines).strip()

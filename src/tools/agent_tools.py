@@ -6,14 +6,12 @@ from crewai.tools import tool
 
 from src.integrations.content_briefing import ContentBriefingService
 from src.integrations.google_services import GoogleServices
-from src.integrations.google_sheets import GoogleSheetsService
 from src.integrations.memory import MemoryStore
 from src.integrations.notion import NotionClient
 from src.integrations.notifier import get_notifier
 
 _notion: NotionClient | None = None
 _google: GoogleServices | None = None
-_sheets: GoogleSheetsService | None = None
 _notifier = None
 _memory: MemoryStore | None = None
 
@@ -30,13 +28,6 @@ def _get_google() -> GoogleServices:
     if _google is None:
         _google = GoogleServices()
     return _google
-
-
-def _get_sheets() -> GoogleSheetsService:
-    global _sheets
-    if _sheets is None:
-        _sheets = GoogleSheetsService()
-    return _sheets
 
 
 def _parse_detalii(detalii: str, aliases: dict[str, str]) -> dict[str, str]:
@@ -60,34 +51,19 @@ def _parse_detalii(detalii: str, aliases: dict[str, str]) -> dict[str, str]:
 
 
 _AJUT_FIELD_ALIASES = {
-    "contact": "persoana_contact",
-    "persoana": "persoana_contact",
-    "persoana_contact": "persoana_contact",
-    "telefon": "telefon_email",
-    "email": "telefon_email",
-    "telefon_email": "telefon_email",
-    "locatie": "locatie",
-    "locație": "locatie",
-    "adresa": "locatie",
     "status": "status",
-    "note": "note",
-    "nota": "note",
-    "urmatorul_pas": "urmatorul_pas",
-    "următorul_pas": "urmatorul_pas",
 }
 
-_EDITOR_FIELD_ALIASES = {
-    "link": "link_video",
-    "link_video": "link_video",
-    "video": "link_video",
-    "instructiuni": "instructiuni",
-    "instrucțiuni": "instructiuni",
+_POSTING_FIELD_ALIASES = {
+    "oras": "oras",
+    "oraș": "oras",
+    "city": "oras",
+    "prioritate": "prioritate",
+    "priority": "prioritate",
+    "p1": "prioritate",
+    "p2": "prioritate",
+    "p3": "prioritate",
     "status": "status",
-    "assignat": "assignat",
-    "editor": "assignat",
-    "deadline": "deadline",
-    "note": "note",
-    "nota": "note",
 }
 
 
@@ -105,22 +81,35 @@ def _get_memory() -> MemoryStore:
     return _memory
 
 
-@tool("Get Tasks from Notion")
-def get_notion_tasks(status: str = "") -> str:
-    """Fetch tasks from Notion task dashboard. Optional status filter: To Do, In Progress, Done."""
+def _format_notion_records(records: list[dict[str, str]], key_fields: list[str]) -> str:
+    if not records:
+        return (
+            "NOTION_EMPTY: 0 înregistrări în Notion (listă goală). "
+            "Răspunde utilizatorului că lista e goală. NU inventa înregistrări."
+        )
+    lines = []
+    for record in records:
+        parts = [f"{field}: {record.get(field, '')}" for field in key_fields if record.get(field)]
+        lines.append("- " + " | ".join(parts))
+    return "\n".join(lines)
+
+
+@tool("Get Family and Administrative from Notion")
+def get_notion_family(status: str = "") -> str:
+    """Fetch items from Notion Family & Administrative database. Optional status: To Do, In Progress, Done."""
     try:
-        tasks = _get_notion().get_tasks(status=status or None)
-        if not tasks:
-            return "Nu există task-uri în Notion."
+        items = _get_notion().get_family_items(status=status or None)
+        if not items:
+            return "Nu există iteme în Family & Administrative."
         lines = []
-        for t in tasks:
-            title = NotionClient.extract_title(t)
-            priority = NotionClient.extract_text_property(t, "Priority")
-            due = NotionClient.extract_text_property(t, "Due Date")
+        for item in items:
+            title = NotionClient.extract_title(item)
+            priority = NotionClient.extract_text_property(item, "Priority")
+            due = NotionClient.extract_text_property(item, "Due Date")
             lines.append(f"- {title} | Prioritate: {priority} | Deadline: {due or 'N/A'}")
         return "\n".join(lines)
     except Exception as e:
-        return f"Eroare la citirea task-urilor: {e}"
+        return f"Eroare la citirea Family & Administrative: {e}"
 
 
 @tool("Get Content Ideas from Notion")
@@ -163,19 +152,21 @@ def get_content_ideas(status: str = "") -> str:
 
 @tool("Get Posting Plan from Notion")
 def get_posting_plan() -> str:
-    """Fetch the content posting plan from Notion."""
+    """Fetch the content posting plan from Notion (Content Creation → Posting Plan)."""
     try:
         plan = _get_notion().get_posting_plan()
         if not plan:
-            return "Posting plan gol."
-        lines = []
+            return "NOTION_POSTING_EMPTY: Posting Plan gol."
+        lines = ["NOTION_POSTING_PLAN:"]
         for p in plan:
-            title = NotionClient.extract_title(p)
-            date = NotionClient.extract_text_property(p, "Date")
-            lines.append(f"- {date or 'TBD'}: {title}")
+            rec = NotionClient.posting_plan_record(p)
+            lines.append(
+                f"- {rec['Titlu']} | Oras: {rec['Oras'] or '—'} | "
+                f"Prioritate: {rec['Prioritate'] or '—'} | Status: {rec['Status'] or '—'}"
+            )
         return "\n".join(lines)
     except Exception as e:
-        return f"Eroare: {e}"
+        return f"Eroare Posting Plan: {e}"
 
 
 @tool("Get Ajut Cum Pot Items")
@@ -184,44 +175,53 @@ def get_ajut_cum_pot() -> str:
     try:
         items = _get_notion().get_ajut_cum_pot_items()
         if not items:
-            return "Nu există iteme Ajut Cum Pot."
-        return "\n".join(f"- {NotionClient.extract_title(i)}" for i in items)
+            return "NOTION_ACP_EMPTY: Nu există iteme Ajut Cum Pot."
+        lines = ["NOTION_AJUT_CUM_POT:"]
+        for item in items:
+            title = NotionClient.extract_title(item)
+            status = NotionClient.extract_text_property(item, "Status") or "—"
+            lines.append(f"- {title} | Status: {status}")
+        return "\n".join(lines)
     except Exception as e:
         return f"Eroare: {e}"
 
 
-@tool("Create Task in Notion")
-def create_notion_task(title: str, priority: str = "Medium", due_date: str = "") -> str:
-    """Create a new task in Notion. Priority: Low, Medium, High. due_date format: YYYY-MM-DD."""
+@tool("Create Family and Administrative Item in Notion")
+def create_notion_family_item(
+    title: str, priority: str = "Medium", due_date: str = ""
+) -> str:
+    """Create a new item in Family & Administrative. Priority: Low, Medium, High. due_date: YYYY-MM-DD."""
     try:
-        result = _get_notion().create_task(title, priority=priority, due_date=due_date or None)
-        return f"Task creat: {title} (ID: {result.get('id', 'N/A')})"
+        result = _get_notion().create_family_item(
+            title, priority=priority, due_date=due_date or None
+        )
+        return f"Item creat în Family & Administrative: {title} (ID: {result.get('id', 'N/A')})"
     except Exception as e:
-        return f"Eroare la creare task: {e}"
+        return f"Eroare la creare item: {e}"
 
 
-@tool("Update Task in Notion")
-def update_notion_task(
-    task_title: str,
+@tool("Update Family and Administrative Item in Notion")
+def update_notion_family_item(
+    item_title: str,
     status: str = "",
     priority: str = "",
     due_date: str = "",
 ) -> str:
-    """Update an existing Notion task by exact title. Status: To Do, In Progress, Done."""
+    """Update an existing Family & Administrative item by exact title. Status: To Do, In Progress, Done."""
     try:
         notion = _get_notion()
-        task = notion.find_task_by_title(task_title)
-        if not task:
-            return f"Task negăsit: {task_title}"
-        notion.update_task(
-            task["id"],
+        item = notion.find_family_item_by_title(item_title)
+        if not item:
+            return f"Item negăsit în Family & Administrative: {item_title}"
+        notion.update_family_item(
+            item["id"],
             status=status or None,
             priority=priority or None,
             due_date=due_date or None,
         )
-        return f"Task actualizat: {task_title}"
+        return f"Item actualizat: {item_title}"
     except Exception as e:
-        return f"Eroare la actualizare task: {e}"
+        return f"Eroare la actualizare item: {e}"
 
 
 @tool("Create Content Idea in Notion")
@@ -242,12 +242,12 @@ def create_notion_idea(
         return f"Eroare la creare idee: {e}"
 
 
-@tool("Save Journal Entry to Notion")
-def save_journal(title: str, content: str, mood: str = "Reflectiv") -> str:
-    """Save a journal/reflection entry to Notion journal database."""
+@tool("Save Job Entry to Notion")
+def save_job(title: str, content: str, mood: str = "Reflectiv") -> str:
+    """Save a work/job note to Notion Job database."""
     try:
-        _get_notion().save_journal_entry(title, content, mood)
-        return f"Jurnal salvat: {title}"
+        _get_notion().save_job_entry(title, content, mood)
+        return f"Notă Job salvată: {title}"
     except Exception as e:
         return f"Eroare: {e}"
 
@@ -272,129 +272,125 @@ def get_today_calendar() -> str:
         return f"Eroare: {e}"
 
 
-@tool("List Ajut Cum Pot Partners")
-def list_ajut_partners_sheet() -> str:
-    """List ALL Ajut Cum Pot partners from Google Sheets. No parameters. Use only this output in your answer."""
+@tool("List Ajut Cum Pot Partners from Notion")
+def list_ajut_partners_notion() -> str:
+    """List ALL Ajut Cum Pot partners from Notion. No parameters. Use only this output in your answer."""
     try:
-        records = _get_sheets().get_ajut_partners()
-        count = len(records)
-        body = GoogleSheetsService.format_records(
-            records,
-            ["Partener", "Persoana contact", "Locatie", "Status", "Urmatorul pas"],
-        )
-        return f"Total parteneri in Sheets: {count}\n{body}"
+        records = [
+            {
+                "Partener": NotionClient.extract_title(item),
+                "Status": NotionClient.extract_text_property(item, "Status"),
+            }
+            for item in _get_notion().get_ajut_cum_pot_items(limit=100)
+        ]
+        body = _format_notion_records(records, ["Partener", "Status"])
+        return f"Total parteneri în Notion: {len(records)}\n{body}"
     except Exception as e:
-        return f"Eroare Sheets Ajut Cum Pot: {e}. NU inventa date."
+        return f"Eroare Notion Ajut Cum Pot: {e}. NU inventa date."
 
 
-@tool("Add Ajut Cum Pot Partner to Sheets")
-def add_ajut_partner_sheet(partener: str, detalii: str = "") -> str:
-    """Add a partner row. Required: partener (name only).
-    Optional detalii: ONLY fields the user explicitly said, as key=value pairs separated by |
-    Allowed keys: contact, telefon, locatie, status, note, urmatorul_pas
-    Example: partener='ONG X', detalii='locatie=Bucuresti | contact=Ana'
-    If user gives only the name, leave detalii empty. Do NOT invent missing fields."""
+@tool("Add Ajut Cum Pot Partner to Notion")
+def add_ajut_partner_notion(partener: str, detalii: str = "") -> str:
+    """Add a partner in Notion Ajut Cum Pot. Required: partener (name only).
+    Optional detalii: status=Active (key=value). Leave empty if user gave only the name."""
     try:
         fields = _parse_detalii(detalii, _AJUT_FIELD_ALIASES)
-        _get_sheets().add_ajut_partner(partener=partener, **fields)
-        filled = [k for k, v in fields.items() if v]
-        extra = f" (campuri: {', '.join(filled)})" if filled else " (doar numele, restul gol)"
-        return f"Partener adaugat in Sheets: {partener}{extra}"
-    except Exception as e:
-        return f"Eroare la adaugare partener: {e}"
-
-
-@tool("Update Ajut Cum Pot Partner in Sheets")
-def update_ajut_partner_sheet(
-    partener: str,
-    persoana_contact: str = "",
-    telefon_email: str = "",
-    locatie: str = "",
-    status: str = "",
-    note: str = "",
-    urmatorul_pas: str = "",
-) -> str:
-    """Update existing Ajut Cum Pot partner row by exact partner name."""
-    try:
-        ok = _get_sheets().update_ajut_partner(
+        _get_notion().create_ajut_cum_pot_item(
             partener,
-            persoana_contact=persoana_contact,
-            telefon_email=telefon_email,
-            locatie=locatie,
-            status=status,
-            note=note,
-            urmatorul_pas=urmatorul_pas,
+            status=fields.get("status", ""),
         )
-        return f"Partener actualizat: {partener}" if ok else f"Partener negasit: {partener}"
+        extra = f" (status: {fields['status']})" if fields.get("status") else ""
+        return f"Partener adăugat în Notion: {partener}{extra}"
+    except Exception as e:
+        return f"Eroare la adăugare partener: {e}"
+
+
+@tool("Update Ajut Cum Pot Partner in Notion")
+def update_ajut_partner_notion(partener: str, status: str = "") -> str:
+    """Update existing Ajut Cum Pot partner by exact name."""
+    try:
+        notion = _get_notion()
+        item = notion.find_ajut_cum_pot_by_title(partener)
+        if not item:
+            return f"Partener negăsit în Notion: {partener}"
+        if status:
+            notion.update_ajut_cum_pot_item(item["id"], status=status)
+        return f"Partener actualizat: {partener}"
     except Exception as e:
         return f"Eroare la actualizare partener: {e}"
 
 
 @tool("Get Content Creation Briefing")
 def get_content_creation_briefing() -> str:
-    """Content Creation sheet briefing: rows missing link/instructions + newly Done items to post. No parameters."""
+    """
+    Read-only Content Creation briefing from Notion Posting Plan.
+    Does NOT update seen Posted state. Finalize runs once at end of daily briefing.
+    """
     try:
-        return ContentBriefingService().run()
+        return ContentBriefingService().build_section()
     except Exception as e:
         return f"Eroare briefing Content Creation: {e}"
 
 
-@tool("List Editor Pipeline Materials")
-def list_editor_pipeline_sheet() -> str:
-    """List ALL video materials for editors from Google Sheets. No parameters. Use only this output."""
+@tool("List Posting Plan Items from Notion")
+def list_posting_plan_notion() -> str:
+    """List ALL posting plan items from Notion. No parameters. Use only this output."""
     try:
-        records = _get_sheets().get_editor_materials()
-        count = len(records)
-        body = GoogleSheetsService.format_records(
+        records = [
+            NotionClient.posting_plan_record(p) for p in _get_notion().get_posting_plan(limit=100)
+        ]
+        body = _format_notion_records(
             records,
-            ["Titlu", "Link video", "Status", "Assignat", "Deadline"],
+            ["Titlu", "Oras", "Prioritate", "Status"],
         )
-        return f"Total materiale in Sheets: {count}\n{body}"
+        return f"Total postări în Notion Posting Plan: {len(records)}\n{body}"
     except Exception as e:
-        return f"Eroare Sheets editori: {e}. NU inventa date."
+        return f"Eroare Notion Posting Plan: {e}. NU inventa date."
 
 
-@tool("Add Editor Material to Sheets")
-def add_editor_material_sheet(titlu: str, detalii: str = "") -> str:
-    """Add editor material row. Required: titlu.
-    Optional detalii: ONLY fields the user said, key=value pairs separated by |
-    Allowed keys: link, instructiuni, status, assignat, deadline, note
-    Example: titlu='Clip vlog', detalii='link=https://... | assignat=Maria'
-    Leave detalii empty if user gave only title. Do NOT invent missing fields."""
+@tool("Add Posting Plan Item to Notion")
+def add_posting_plan_notion(titlu: str, detalii: str = "") -> str:
+    """Add item to Notion Posting Plan. Required: titlu.
+    Optional detalii: key=value pairs separated by | — oras, prioritate (p1/p2/p3), status
+    Example: titlu='Momo', detalii='oras=București | prioritate=p1 | status=Planned'
+    Leave detalii empty if user gave only title."""
     try:
-        fields = _parse_detalii(detalii, _EDITOR_FIELD_ALIASES)
-        _get_sheets().add_editor_material(titlu=titlu, **fields)
-        filled = [k for k, v in fields.items() if v]
-        extra = f" (campuri: {', '.join(filled)})" if filled else " (doar titlul, restul gol)"
-        return f"Material adaugat pentru editori: {titlu}{extra}"
-    except Exception as e:
-        return f"Eroare la adaugare material: {e}"
-
-
-@tool("Update Editor Material in Sheets")
-def update_editor_material_sheet(
-    titlu: str,
-    link_video: str = "",
-    instructiuni: str = "",
-    status: str = "",
-    assignat: str = "",
-    deadline: str = "",
-    note: str = "",
-) -> str:
-    """Update existing editor material row by exact title."""
-    try:
-        ok = _get_sheets().update_editor_material(
+        fields = _parse_detalii(detalii, _POSTING_FIELD_ALIASES)
+        _get_notion().create_posting_plan_item(
             titlu,
-            link_video=link_video,
-            instructiuni=instructiuni,
-            status=status,
-            assignat=assignat,
-            deadline=deadline,
-            note=note,
+            oras=fields.get("oras", ""),
+            prioritate=fields.get("prioritate", ""),
+            status=fields.get("status", "Planned"),
         )
-        return f"Material actualizat: {titlu}" if ok else f"Material negasit: {titlu}"
+        filled = [k for k, v in fields.items() if v]
+        extra = f" (câmpuri: {', '.join(filled)})" if filled else " (doar titlul)"
+        return f"Postare adăugată în Posting Plan: {titlu}{extra}"
     except Exception as e:
-        return f"Eroare la actualizare material: {e}"
+        return f"Eroare la adăugare postare: {e}"
+
+
+@tool("Update Posting Plan Item in Notion")
+def update_posting_plan_notion(
+    titlu: str,
+    oras: str = "",
+    prioritate: str = "",
+    status: str = "",
+) -> str:
+    """Update existing posting plan item by exact title."""
+    try:
+        notion = _get_notion()
+        item = notion.find_posting_plan_by_title(titlu)
+        if not item:
+            return f"Postare negăsită în Posting Plan: {titlu}"
+        notion.update_posting_plan_item(
+            item["id"],
+            oras=oras or None,
+            prioritate=prioritate or None,
+            status=status or None,
+        )
+        return f"Postare actualizată: {titlu}"
+    except Exception as e:
+        return f"Eroare la actualizare postare: {e}"
 
 
 @tool("Send Alert Notification")
@@ -437,24 +433,24 @@ def get_idea_mode_tools() -> list:
 
 
 _ALL_TOOLS = [
-        get_notion_tasks,
-        get_content_ideas,
-        get_posting_plan,
-        get_ajut_cum_pot,
-        create_notion_task,
-        update_notion_task,
-        create_notion_idea,
-        save_journal,
-        get_calendar_events,
-        get_today_calendar,
-        list_ajut_partners_sheet,
-        add_ajut_partner_sheet,
-        update_ajut_partner_sheet,
-        get_content_creation_briefing,
-        list_editor_pipeline_sheet,
-        add_editor_material_sheet,
-        update_editor_material_sheet,
-        send_alert_notification,
-        recall_memory,
-        store_memory,
+    get_notion_family,
+    get_content_ideas,
+    get_posting_plan,
+    get_ajut_cum_pot,
+    create_notion_family_item,
+    update_notion_family_item,
+    create_notion_idea,
+    save_job,
+    get_calendar_events,
+    get_today_calendar,
+    list_ajut_partners_notion,
+    add_ajut_partner_notion,
+    update_ajut_partner_notion,
+    get_content_creation_briefing,
+    list_posting_plan_notion,
+    add_posting_plan_notion,
+    update_posting_plan_notion,
+    send_alert_notification,
+    recall_memory,
+    store_memory,
 ]

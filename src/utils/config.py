@@ -33,11 +33,12 @@ class Settings(BaseSettings):
 
     # Notion
     notion_api_key: str = ""
-    notion_tasks_db_id: str = ""
+    notion_family_db_id: str = ""
     notion_ideas_db_id: str = ""
+    notion_content_creation_id: str = ""
     notion_posting_plan_db_id: str = ""
     notion_ajut_cum_pot_db_id: str = ""
-    notion_journal_db_id: str = ""
+    notion_job_db_id: str = ""
     notion_briefings_page_id: str = ""
 
     # Google
@@ -62,7 +63,16 @@ class Settings(BaseSettings):
     discord_allowed_user_ids: str = ""
     enable_discord_bot: bool = False
 
+    # Discord voice messages (transcription via OpenAI Whisper)
+    enable_discord_voice: bool = True
+    discord_voice_language: str = "ro"
+    discord_voice_model: str = "whisper-1"
+    discord_voice_max_duration_seconds: int = 120
+    discord_voice_max_bytes: int = 25_000_000
+
     # Web search (explicit trigger only — e.g. caută: or caută pe net)
+    enable_research_mode: bool = True
+
     enable_web_search: bool = True
     web_search_max_results: int = 5
     web_search_fetch_pages: bool = True
@@ -107,6 +117,21 @@ class Settings(BaseSettings):
     weekly_review_day: str = "sunday"
     weekly_review_hour: int = 20
     enable_scheduler: bool = True
+    enable_task_reminder: bool = True
+    task_reminder_interval_hours: int = 2
+    task_reminder_discord: bool = True
+    task_reminder_discord_dm: bool = True
+    task_reminder_discord_dm_user_ids: str = ""
+    task_reminder_start_hour: int = 8
+    task_reminder_end_hour: int = 18
+    task_reminder_days: str = "mon,tue,wed,thu,fri,sat"
+
+    # Auto voice-over for Notion ideas missing scripts
+    enable_auto_voiceover: bool = True
+    auto_voiceover_interval_minutes: int = 60
+    auto_voiceover_max_per_run: int = 2
+    auto_voiceover_statuses: str = "Draft"
+    auto_voiceover_notify_discord: bool = True
 
     @property
     def is_production(self) -> bool:

@@ -9,6 +9,7 @@ import src.bootstrap  # noqa: F401
 
 from src.jobs.alerts import run_smart_alerts
 from src.jobs.daily_briefing import run_daily_briefing
+from src.jobs.task_reminder import run_task_reminder
 from src.jobs.weekly_review import run_weekly_review
 from src.utils.config import settings
 from src.utils.logging import get_logger, setup_logging
@@ -43,6 +44,7 @@ class Handler(BaseHTTPRequestHandler):
             "/trigger/daily": run_daily_briefing,
             "/trigger/weekly": run_weekly_review,
             "/trigger/alerts": run_smart_alerts,
+            "/trigger/task-reminder": run_task_reminder,
         }
 
         if parsed.path not in routes:

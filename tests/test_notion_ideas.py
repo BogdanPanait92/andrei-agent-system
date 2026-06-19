@@ -15,6 +15,14 @@ def test_infer_idea_category_content() -> None:
     assert NotionClient.infer_idea_category("postare pe blog despre productivitate") == "content creation"
 
 
+def test_extract_idea_title_from_idea_declaration() -> None:
+    raw = (
+        "Mi-a venit acum o idee nouă să fac un clip despre "
+        "reproducerea la mamifere."
+    )
+    assert NotionClient.extract_idea_title(raw) == "reproducerea la mamifere"
+
+
 def test_extract_idea_title_truncates() -> None:
     long = "curs online despre parenting și echilibru muncă-familie pentru părinți ocupați " * 3
     title = NotionClient.extract_idea_title(long)

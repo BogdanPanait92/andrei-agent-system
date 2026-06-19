@@ -27,11 +27,11 @@ def main() -> int:
         return 1
 
     dbs = {
-        "Tasks": settings.notion_tasks_db_id,
+        "Family & Administrative": settings.notion_family_db_id,
         "Ideas": settings.notion_ideas_db_id,
         "Posting Plan": settings.notion_posting_plan_db_id,
         "Ajut Cum Pot": settings.notion_ajut_cum_pot_db_id,
-        "Journal": settings.notion_journal_db_id,
+        "Job": settings.notion_job_db_id,
     }
 
     try:
@@ -52,19 +52,25 @@ def main() -> int:
             any_ok = True
         except Exception as e:
             print(f"FAIL: {name} — {e}")
-            print(f"      → Share database with your integration in Notion")
+            print("      → Share database with your integration in Notion")
 
-    if settings.notion_briefings_page_id and "xxxx" not in settings.notion_briefings_page_id:
+    pages = {
+        "Briefings": settings.notion_briefings_page_id,
+        "Content Creation": settings.notion_content_creation_id,
+    }
+    for name, page_id in pages.items():
+        if not page_id or "xxxx" in page_id:
+            print(f"SKIP: {name} page — optional")
+            continue
         try:
-            notion.client.blocks.children.list(block_id=settings.notion_briefings_page_id)
-            print("OK: Briefings page — accessible")
+            notion.client.blocks.children.list(block_id=page_id)
+            print(f"OK: {name} page — accessible")
+            any_ok = True
         except Exception as e:
-            print(f"FAIL: Briefings page — {e}")
-    else:
-        print("SKIP: Briefings page — optional (NOTION_BRIEFINGS_PAGE_ID)")
+            print(f"FAIL: {name} page — {e}")
 
     if not any_ok:
-        print("\nConfigure at least NOTION_TASKS_DB_ID for daily briefing.")
+        print("\nConfigure at least NOTION_FAMILY_DB_ID for daily briefing.")
         return 1
 
     print("\nSUCCESS — Notion is ready.")
