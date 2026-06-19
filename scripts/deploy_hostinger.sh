@@ -32,6 +32,33 @@ log_ok()    { echo -e "${GREEN}[OK]${NC} $*"; }
 log_warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $*"; }
 
+wait_for_apt_lock() {
+    local max_wait="${1:-300}"
+    local waited=0
+    while pgrep -x apt >/dev/null 2>&1 \
+       || pgrep -x apt-get >/dev/null 2>&1 \
+       || pgrep -f "unattended-upgrade" >/dev/null 2>&1 \
+       || pgrep -x dpkg >/dev/null 2>&1; do
+        if [[ $waited -ge $max_wait ]]; then
+            log_error "Lock apt/dpkg ocupat după ${max_wait}s."
+            log_error "Verifică: ps aux | grep -E 'apt|dpkg|unattended'"
+            log_error "Așteaptă 2-3 minute și rulează din nou deploy-ul."
+            exit 1
+        fi
+        log_warn "Actualizări sistem în curs — aștept eliberarea lock-ului apt (${waited}s)..."
+        sleep 10
+        waited=$((waited + 10))
+    done
+}
+
+apt_install() {
+    wait_for_apt_lock
+    DEBIAN_FRONTEND=noninteractive apt-get \
+        -o DPkg::Lock::Timeout=120 \
+        -o APT::Acquire::Retries=3 \
+        "$@"
+}
+
 usage() {
     cat <<EOF
 Andrei AI Agent System — Hostinger VPS Deploy
@@ -85,8 +112,9 @@ fi
 if ! $SKIP_DOCKER_INSTALL; then
     if ! command -v docker &>/dev/null; then
         log_info "Docker nu e instalat. Instalez..."
-        apt-get update -qq
-        apt-get install -y -qq curl ca-certificates
+        apt_install update -qq
+        apt_install install -y -qq curl ca-certificates
+        wait_for_apt_lock
         curl -fsSL https://get.docker.com | sh
         systemctl enable docker
         systemctl start docker
@@ -97,8 +125,8 @@ if ! $SKIP_DOCKER_INSTALL; then
 
     if ! docker compose version &>/dev/null; then
         log_info "Instalez docker-compose-plugin..."
-        apt-get update -qq
-        apt-get install -y -qq docker-compose-plugin git
+        apt_install update -qq
+        apt_install install -y -qq docker-compose-plugin git
         log_ok "docker compose plugin instalat."
     fi
 fi
@@ -209,7 +237,7 @@ fi
 # --- Nginx (optional) ---
 if [[ -n "$NGINX_DOMAIN" ]]; then
     log_info "Configurez Nginx pentru $NGINX_DOMAIN..."
-    apt-get install -y -qq nginx certbot python3-certbot-nginx 2>/dev/null || true
+    apt_install install -y -qq nginx certbot python3-certbot-nginx 2>/dev/null || true
 
     cat > "/etc/nginx/sites-available/andreia" <<NGINX
 server {
